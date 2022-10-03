@@ -9,7 +9,7 @@
   onMount(() => {
     map = new Map({
       container: mapContainer,
-      style: "https://tiles.maps.jwestman.net/styles/basic-preview/style.json",
+      style: "https://tiles.maps.jwestman.net/styles/osm-liberty/style.json",
     });
   });
 
