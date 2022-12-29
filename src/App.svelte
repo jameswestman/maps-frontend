@@ -39,9 +39,9 @@
 <div>
   <div class="map" id="map" bind:this={mapContainer} />
 
-  <div class="container position-absolute top-0 left-0 right-0">
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-4 p-3">
+  <div class="container position-absolute top-0 left-0 right-0" style="pointer-events: none">
+    <div class="row" style="pointer-events: none">
+      <div class="col-12 col-md-6 col-lg-4 p-3" style="pointer-events: auto">
         <ButtonGroup class="w-100">
           <Button active={variant === "light"} on:click={() => setVariant("light")}>Light</Button>
           <Button active={variant === "dark"} on:click={() => setVariant("dark")}>Dark</Button>
