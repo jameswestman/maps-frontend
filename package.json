@@ -20,6 +20,8 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
-    "maplibre-gl": "^2.4.0"
+    "bootstrap": "^5.2.3",
+    "maplibre-gl": "^2.4.0",
+    "sveltestrap": "^5.10.0"
   }
 }
