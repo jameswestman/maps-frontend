@@ -28,6 +28,7 @@
     map = new Map({
       container: mapContainer,
       style: "https://tiles.maps.jwestman.net/styles/light/style.json",
+      hash: true,
     });
   });
 
