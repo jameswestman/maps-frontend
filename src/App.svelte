@@ -2,12 +2,20 @@
   import { Map, MapMouseEvent } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
-  import { Alert, Button, ButtonGroup } from "sveltestrap";
+  import { Alert, Button, ButtonGroup, Progress } from "sveltestrap";
 
   let map: Map;
   let mapContainer: HTMLElement;
 
   let variant = "light";
+
+  interface SponsorInfo {
+    title: string;
+    description: string;
+    percentComplete: number;
+    targetValue: number;
+  }
+  let sponsorInfo: SponsorInfo;
 
   const setVariant = (newVariant: string) => {
     variant = newVariant;
@@ -16,7 +24,14 @@
     );
   };
 
+  const fetchSponsor = async () => {
+    const res = await fetch("https://sponsors-endpoint.jwestman.net/goal");
+    sponsorInfo = await res.json();
+  };
+
   onMount(() => {
+    fetchSponsor();
+
     map = new Map({
       container: mapContainer,
       style: "https://tiles.maps.jwestman.net/styles/light/style.json",
@@ -97,11 +112,27 @@
 
         <Alert class="mt-3" color="success" dismissible>
           <h5>You can sponsor my work on GitHub Sponsors or Patreon!</h5>
-          <p>
-            Your support helps me pay hosting costs for the map server, and
-            encourages me to devote more time to improving this map style and
-            other projects.
-          </p>
+          {#if sponsorInfo}
+            <div>
+              <strong>Current Goal: {sponsorInfo.title}</strong>
+              <Progress
+                color={sponsorInfo.percentComplete >= 100
+                  ? "success"
+                  : "secondary"}
+                value={sponsorInfo.percentComplete}
+              >
+                {sponsorInfo.percentComplete}%
+              </Progress>
+              <p class="mt-2">{sponsorInfo.description}</p>
+            </div>
+          {:else}
+            <p>
+              Your support helps me pay hosting costs for the map server, and
+              encourages me to devote more time to improving this map style and
+              other projects.
+            </p>
+          {/if}
+
           <div>
             <Button
               href="https://github.com/sponsors/jameswestman"
