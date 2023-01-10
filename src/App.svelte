@@ -1,18 +1,8 @@
 <script lang="ts">
-  import { Map } from "maplibre-gl";
+  import { Map, MapMouseEvent } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
-  import {
-    Alert,
-    Button,
-    ButtonGroup,
-    Card,
-    CardBody,
-    Input,
-    InputGroup,
-    Navbar,
-    NavbarBrand,
-  } from "sveltestrap";
+  import { Alert, Button, ButtonGroup } from "sveltestrap";
 
   let map: Map;
   let mapContainer: HTMLElement;
@@ -31,6 +21,34 @@
       container: mapContainer,
       style: "https://tiles.maps.jwestman.net/styles/light/style.json",
       hash: true,
+    });
+
+    map.on("styledata", (event) => {
+      const style = map.getStyle();
+      for (const layer of style.layers) {
+        if (!layer.metadata) continue;
+        const cursor = layer.metadata["libshumate:cursor"];
+
+        if (cursor) {
+          map.on("mouseenter", layer.id, (event: MapMouseEvent) => {
+            const features = map.queryRenderedFeatures(event.point);
+            if (features.length > 0) {
+              console.log("mouseenter");
+              const canvas = mapContainer.querySelector(
+                ".maplibregl-canvas"
+              ) as HTMLElement;
+              canvas.style.cursor = cursor;
+            }
+          });
+
+          map.on("mouseleave", layer.id, () => {
+            const canvas = mapContainer.querySelector(
+              ".maplibregl-canvas"
+            ) as HTMLElement;
+            canvas.style.cursor = "grab";
+          });
+        }
+      }
     });
   });
 
