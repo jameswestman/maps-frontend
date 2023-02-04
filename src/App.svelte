@@ -36,6 +36,7 @@
       container: mapContainer,
       style: "https://tiles.maps.jwestman.net/styles/light/style.json",
       hash: true,
+      customAttribution: "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>"
     });
 
     map.on("styledata", (event) => {
