@@ -48,7 +48,17 @@
     inverse={$resolvedTheme === "dark"}
   >
     <CardBody>
-      <h3 class="mb-0">{feature.properties["name"]}</h3>
+      <span class="d-flex flex-row">
+        <h3 class="mb-0">{feature.properties["name"]}</h3>
+        <span class="flex-grow-1"></span>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          class:btn-close-white={$resolvedTheme === "dark"}
+          on:click={() => (feature = undefined)}
+        />
+      </span>
     </CardBody>
 
     {#if population}
@@ -66,7 +76,7 @@
     {/if}
 
     {#if image}
-      <img src={image} class="rounded-bottom" alt=""/>
+      <img src={image} class="rounded-bottom" alt="" />
     {/if}
   </Card>
 {/if}
