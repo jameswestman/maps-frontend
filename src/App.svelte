@@ -2,12 +2,23 @@
   import { Map, MapMouseEvent, type Feature } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
-  import { Alert, Button, ButtonGroup, Progress } from "sveltestrap";
+  import {
+    Alert,
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    Progress,
+  } from "sveltestrap";
   import PlaceCard from "./PlaceCard.svelte";
   import { resolvedTheme, Theme, theme } from "./theme";
 
   let map: Map;
   let mapContainer: HTMLElement;
+
+  let zoom = 0;
+  let lat = 0;
+  let lng = 0;
 
   let selectedFeature: Feature;
 
@@ -43,6 +54,15 @@
       hash: true,
       customAttribution:
         "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>",
+    });
+    zoom = map.getZoom();
+    [lng, lat] = map.getCenter().toArray();
+
+    map.on("zoomend", () => {
+      zoom = map.getZoom();
+    });
+    map.on("moveend", () => {
+      [lng, lat] = map.getCenter().toArray();
     });
 
     const unregisterListeners: (() => void)[] = [];
@@ -125,6 +145,46 @@
               Dark
             </Button>
           </ButtonGroup>
+
+          <Card
+            class="mt-3"
+            color={$resolvedTheme === "dark" ? "dark" : "light"}
+            inverse={$resolvedTheme === "dark"}
+          >
+            <CardBody>
+              <span>Open in:</span>
+              <a
+                href="https://openstreetmap.org/#map={zoom + 1}/{lat}/{lng}"
+                target="_blank"
+              >
+                OpenStreetMap
+              </a>
+              <a
+                href="https://tiles.maps.jwestman.net/data/streets_v3/#{zoom}/{lat}/{lng}"
+                target="_blank"
+              >
+                Tile Inspector
+              </a>
+              <a
+                href="https://google.com/maps/@{lat},{lng},{zoom + 1}z"
+                target="_blank"
+              >
+                Google Maps
+              </a>
+              <a
+                href="https://bing.com/maps?cp={lat}~{lng}&lvl={zoom + 1}"
+                target="_blank"
+              >
+                Bing Maps
+              </a>
+              <a
+                href="https://qwant.com/maps#map={zoom}/{lat}/{lng}"
+                target="_blank"
+              >
+                Qwant Maps
+              </a>
+            </CardBody>
+          </Card>
 
           <div class="mt-3">
             <PlaceCard feature={selectedFeature} />
