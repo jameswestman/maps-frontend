@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as shieldlib from "@americana/maplibre-shield-generator";
   import { Map, MapMouseEvent, type Feature } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
@@ -11,7 +12,10 @@
     Progress,
   } from "sveltestrap";
   import PlaceCard from "./PlaceCard.svelte";
-  import { resolvedTheme, Theme, theme } from "./theme";
+  import { loadShields } from "./thirdparty/openstreetmap-americana/src/js/shield_defs";
+  import * as shield_format from "./thirdparty/openstreetmap-americana/src/js/shield_format";
+  import * as highway_shield from "./thirdparty/openstreetmap-americana/src/layer/highway_shield";
+  import { Theme, resolvedTheme, theme } from "./theme";
 
   let map: Map;
   let mapContainer: HTMLElement;
@@ -57,6 +61,11 @@
     });
     zoom = map.getZoom();
     [lng, lat] = map.getCenter().toArray();
+
+    new shieldlib.ShieldRenderer(loadShields(), shield_format.routeParser)
+      .filterImageID(shield_format.shieldPredicate)
+      .filterNetwork(shield_format.networkPredicate)
+      .renderOnMaplibreGL(map);
 
     map.on("zoomend", () => {
       zoom = map.getZoom();
@@ -109,6 +118,16 @@
           map.on("click", layer.id, click);
           unregisterListeners.push(() => map.off("click", layer.id, click));
         }
+      }
+
+      if (!map.getLayer("highway-shield")) {
+        map.setSprite(
+          new URL("/sprites/sprite", location.href).href
+        );
+        const shield_layer = JSON.parse(JSON.stringify(highway_shield.shield));
+        shield_layer.source = "vector-tiles";
+        shield_layer.minzoom = 7;
+        map.addLayer(shield_layer);
       }
     });
   });

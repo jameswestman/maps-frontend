@@ -49,7 +49,7 @@
   >
     <CardBody>
       <span class="d-flex flex-row">
-        <h3 class="mb-0">{feature.properties["name"]}</h3>
+        <h3 class="mb-0">{feature.properties["name"] ?? feature.properties["ref"]}</h3>
         <span class="flex-grow-1"></span>
         <button
           type="button"

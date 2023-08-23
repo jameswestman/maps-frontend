@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run sprites && vite build",
     "preview": "vite preview",
+    "sprites": "cd src/contrib/openstreetmap-americana && node scripts/sprites.js && mkdir -p ../../../public/sprites && cp dist/sprites/* ../../../public/sprites/",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
+    "@basemaps/sprites": "^6.41.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "glob": "^9.2.1",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
@@ -20,11 +23,12 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
+    "@americana/maplibre-shield-generator": "^0.0.3-test-1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/svelte-fontawesome": "^0.2.0",
     "bootstrap": "^5.2.3",
-    "maplibre-gl": "^2.4.0",
+    "maplibre-gl": "^3.3.0",
     "svelte-local-storage-store": "^0.4.0",
     "sveltestrap": "^5.10.0"
   }
