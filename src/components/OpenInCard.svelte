@@ -7,10 +7,7 @@
   export let lng: number;
 </script>
 
-<Card
-  color={$resolvedTheme === "dark" ? "dark" : "light"}
-  inverse={$resolvedTheme === "dark"}
->
+<Card>
   <CardBody>
     <span>Open in:</span>
     <a
@@ -32,6 +29,11 @@
       Qwant Maps
     </a>
 
-    <Input id="tile_inspector" type="checkbox" label="Inspect Data" bind:checked={$theme.inspector}/>
+    <Input
+      id="tile_inspector"
+      type="checkbox"
+      label="Inspect Data"
+      bind:checked={$theme.inspector}
+    />
   </CardBody>
 </Card>

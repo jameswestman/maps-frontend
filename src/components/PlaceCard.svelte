@@ -42,11 +42,7 @@
 </script>
 
 {#if feature}
-  <Card
-    class="scroll"
-    color={$resolvedTheme === "dark" ? "dark" : "light"}
-    inverse={$resolvedTheme === "dark"}
-  >
+  <Card class="scroll">
     <CardBody>
       <span class="d-flex flex-row">
         <h3 class="mb-0">

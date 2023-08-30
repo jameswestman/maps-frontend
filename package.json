@@ -28,7 +28,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/svelte-fontawesome": "^0.2.0",
-    "bootstrap": "^5.2.3",
+    "bootstrap": "^5.3",
     "maplibre-gl": "^3.3.0",
     "randomcolor": "^0.6.2",
     "svelte-local-storage-store": "^0.4.0",

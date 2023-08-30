@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button, Card, ListGroup, ListGroupItem } from "sveltestrap";
   import { inspectedFeatures } from "../inspector";
+  import { resolvedTheme } from "../theme";
 </script>
 
 {#if $inspectedFeatures.features.length > 0}

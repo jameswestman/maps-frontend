@@ -5,6 +5,7 @@
   import PlaceCard from "./components/PlaceCard.svelte";
   import ThemeSwitcher from "./components/ThemeSwitcher.svelte";
   import InspectorCard from "./components/InspectorCard.svelte";
+  import { resolvedTheme } from "./theme";
 
   let zoom = 0;
   let lat = 0;
@@ -13,7 +14,7 @@
   let selectedFeature: Feature;
 </script>
 
-<div>
+<div data-bs-theme={$resolvedTheme}>
   <MapView bind:zoom bind:lat bind:lng bind:selectedFeature />
 
   <div
