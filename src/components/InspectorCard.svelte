@@ -1,18 +1,6 @@
 <script lang="ts">
-  import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Icon,
-    ListGroup,
-    ListGroupItem,
-    Table,
-  } from "sveltestrap";
+  import { Button, Card, ListGroup, ListGroupItem } from "sveltestrap";
   import { inspectedFeatures } from "../inspector";
-
-  const sortEntries = (a: [string, unknown], b: [string, unknown]) =>
-    a[0].localeCompare(b[0]);
 </script>
 
 {#if $inspectedFeatures.features.length > 0}
