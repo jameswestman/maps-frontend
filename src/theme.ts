@@ -14,7 +14,7 @@ export interface Theme {
   inspector: boolean;
 }
 
-export const theme = persisted("theme", {
+export const theme = persisted("theme2", {
   variant: ThemeVariant.SYSTEM,
   inspector: false,
 });
