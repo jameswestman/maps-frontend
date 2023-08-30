@@ -2,8 +2,8 @@
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import type { Feature } from "maplibre-gl";
   import { Card, CardBody, ListGroup, ListGroupItem } from "sveltestrap";
-  import { Theme, theme, resolvedTheme } from "./theme";
-  import { fetchBlurb, fetchWikidata } from "./wikidata";
+  import { Theme, theme, resolvedTheme } from "../theme";
+  import { fetchBlurb, fetchWikidata } from "../wikidata";
 
   export let feature: Feature;
 
