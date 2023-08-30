@@ -1,12 +1,13 @@
 <script lang="ts">
-  import "maplibre-gl/dist/maplibre-gl.css";
-  import { Map, type Feature, MapMouseEvent } from "maplibre-gl";
   import * as shieldlib from "@americana/maplibre-shield-generator";
-  import { loadShields } from "../thirdparty/openstreetmap-americana/src/js/shield_defs";
+  import { Map, MapMouseEvent, type Feature } from "maplibre-gl";
+  import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
-  import { resolvedTheme } from "../theme";
+  import { resolvedTheme, theme, updateMapStyle } from "../theme";
+  import { loadShields } from "../thirdparty/openstreetmap-americana/src/js/shield_defs";
   import * as shield_format from "../thirdparty/openstreetmap-americana/src/js/shield_format";
   import * as highway_shield from "../thirdparty/openstreetmap-americana/src/layer/highway_shield";
+  import { inspectedFeatures } from "../inspector";
 
   export let zoom = 0;
   export let lat = 0;
@@ -17,16 +18,14 @@
   let mapContainer: HTMLElement;
 
   {
-    const unsubscribe = resolvedTheme.subscribe((newTheme) => {
-      if (map)
-        map.setStyle(
-          `https://tiles.maps.jwestman.net/styles/${newTheme}/style.json`
-        );
+    const unsubscribe = theme.subscribe((newTheme) => {
+      updateMapStyle(map, newTheme);
     });
     onDestroy(unsubscribe);
   }
 
   onMount(() => {
+    console.log($resolvedTheme);
     map = new Map({
       container: mapContainer,
       style: `https://tiles.maps.jwestman.net/styles/${$resolvedTheme}/style.json`,
@@ -36,6 +35,8 @@
     });
     zoom = map.getZoom();
     [lng, lat] = map.getCenter().toArray();
+
+    updateMapStyle(map, $theme);
 
     new shieldlib.ShieldRenderer(loadShields(), shield_format.routeParser)
       .filterImageID(shield_format.shieldPredicate)
@@ -53,6 +54,8 @@
 
     map.on("styledata", (event) => {
       const style = map.getStyle();
+      const isInspector = style.metadata?.["inspector"];
+
       for (const unregister of unregisterListeners) {
         unregister();
       }
@@ -95,7 +98,27 @@
         }
       }
 
-      if (!map.getLayer("highway-shield")) {
+      if (isInspector) {
+        const mousemove = (event) => {
+          if (!$inspectedFeatures.clicked) {
+            const features = map.queryRenderedFeatures(event.point);
+            inspectedFeatures.set({ features, clicked: false, coords: event.lngLat.toArray() });
+          }
+        };
+        map.on("mousemove", mousemove);
+        const mouseclick = (event) => {
+          const features = map.queryRenderedFeatures(event.point);
+          inspectedFeatures.set({ features, clicked: true, coords: event.lngLat.toArray() });
+        };
+        map.on("click", mouseclick);
+        unregisterListeners.push(() => {
+          map.off("mousemove", mousemove);
+          map.off("click", mouseclick);
+          inspectedFeatures.set({ features: [], clicked: false });
+        });
+      }
+
+      if (!map.getLayer("highway-shield") && !isInspector) {
         map.setSprite(new URL("/sprites/sprite", location.href).href);
         const shield_layer = JSON.parse(JSON.stringify(highway_shield.shield));
         shield_layer.source = "vector-tiles";

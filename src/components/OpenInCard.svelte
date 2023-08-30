@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Card, CardBody } from "sveltestrap";
-  import { resolvedTheme } from "../theme";
+  import { Card, CardBody, Input } from "sveltestrap";
+  import { resolvedTheme, theme } from "../theme";
 
   export let zoom: number;
   export let lat: number;
@@ -19,12 +19,6 @@
     >
       OpenStreetMap
     </a>
-    <a
-      href="https://tiles.maps.jwestman.net/data/streets_v3/#{zoom}/{lat}/{lng}"
-      target="_blank"
-    >
-      Tile Inspector
-    </a>
     <a href="https://google.com/maps/@{lat},{lng},{zoom + 1}z" target="_blank">
       Google Maps
     </a>
@@ -37,5 +31,7 @@
     <a href="https://qwant.com/maps#map={zoom}/{lat}/{lng}" target="_blank">
       Qwant Maps
     </a>
+
+    <Input id="tile_inspector" type="checkbox" label="Inspect Data" bind:checked={$theme.inspector}/>
   </CardBody>
 </Card>

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import type { Feature } from "maplibre-gl";
-  import { Card, CardBody, ListGroup, ListGroupItem } from "sveltestrap";
-  import { Theme, theme, resolvedTheme } from "../theme";
+  import { Card, CardBody } from "sveltestrap";
+  import { resolvedTheme } from "../theme";
   import { fetchBlurb, fetchWikidata } from "../wikidata";
 
   export let feature: Feature;
@@ -49,8 +49,10 @@
   >
     <CardBody>
       <span class="d-flex flex-row">
-        <h3 class="mb-0">{feature.properties["name"] ?? feature.properties["ref"]}</h3>
-        <span class="flex-grow-1"></span>
+        <h3 class="mb-0">
+          {feature.properties["name"] ?? feature.properties["ref"]}
+        </h3>
+        <span class="flex-grow-1" />
         <button
           type="button"
           class="btn-close"

@@ -4,6 +4,7 @@
   import OpenInCard from "./components/OpenInCard.svelte";
   import PlaceCard from "./components/PlaceCard.svelte";
   import ThemeSwitcher from "./components/ThemeSwitcher.svelte";
+  import InspectorCard from "./components/InspectorCard.svelte";
 
   let zoom = 0;
   let lat = 0;
@@ -33,6 +34,10 @@
 
           <div class="mt-3">
             <PlaceCard feature={selectedFeature} />
+          </div>
+
+          <div class="mt-3">
+            <InspectorCard />
           </div>
         </div>
       </div>

@@ -1,23 +1,52 @@
+import type { Map } from "maplibre-gl";
 import { persisted } from "svelte-local-storage-store";
-import { derived, writable } from "svelte/store";
+import { derived } from "svelte/store";
+import { createInspector } from "./inspector";
 
-export enum Theme {
+export enum ThemeVariant {
   SYSTEM,
   LIGHT,
   DARK,
 }
 
-export const theme = persisted("theme", Theme.SYSTEM);
+export interface Theme {
+  variant: ThemeVariant;
+  inspector: boolean;
+}
 
-export const resolvedTheme = derived(theme, (t) => {
-  switch (t) {
-    case Theme.SYSTEM:
+export const theme = persisted("theme", {
+  variant: ThemeVariant.SYSTEM,
+  inspector: false,
+});
+
+export const resolveThemeVariant = (theme: Theme) => {
+  switch (theme.variant) {
+    case ThemeVariant.SYSTEM:
       return window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
-    case Theme.DARK:
+    case ThemeVariant.DARK:
       return "dark";
-    case Theme.LIGHT:
+    case ThemeVariant.LIGHT:
       return "light";
   }
-});
+};
+
+export const resolvedTheme = derived(theme, (theme) =>
+  resolveThemeVariant(theme)
+);
+
+export const updateMapStyle = (map: Map, theme: Theme) => {
+  if (!map)
+    return;
+
+  if (theme.inspector) {
+    createInspector(map, resolveThemeVariant(theme) === "dark");
+  } else {
+    map.setStyle(
+      `https://tiles.maps.jwestman.net/styles/${resolveThemeVariant(
+        theme
+      )}/style.json`
+    );
+  }
+};
