@@ -125,6 +125,8 @@
         shield_layer.minzoom = 7;
         map.addLayer(shield_layer);
       }
+
+      map.showTileBoundaries = isInspector;
     });
   });
 
