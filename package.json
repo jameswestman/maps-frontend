@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "npm run sprites && vite build",
     "preview": "vite preview",
-    "sprites": "cd src/thirdparty/openstreetmap-americana && node scripts/sprites.js && mkdir -p ../../../public/sprites && cp dist/sprites/* ../../../public/sprites/",
+    "sprites": "node scripts/generate_sprites.js",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
