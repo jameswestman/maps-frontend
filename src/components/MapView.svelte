@@ -1,6 +1,12 @@
 <script lang="ts">
   import * as shieldlib from "@americana/maplibre-shield-generator";
-  import { Map, MapMouseEvent, type Feature } from "maplibre-gl";
+  import {
+    Map,
+    MapMouseEvent,
+    type Feature,
+    GeolocateControl,
+    NavigationControl,
+  } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
   import { resolvedTheme, theme, updateMapStyle } from "../theme";
@@ -16,6 +22,7 @@
 
   let map: Map;
   let mapContainer: HTMLElement;
+  let geolocate: GeolocateControl;
 
   {
     const unsubscribe = theme.subscribe((newTheme) => {
@@ -33,6 +40,16 @@
       customAttribution:
         "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>",
     });
+
+    map.addControl(new NavigationControl());
+    geolocate = new GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+    });
+    map.addControl(geolocate);
+
     zoom = map.getZoom();
     [lng, lat] = map.getCenter().toArray();
 
@@ -102,13 +119,21 @@
         const mousemove = (event) => {
           if (!$inspectedFeatures.clicked) {
             const features = map.queryRenderedFeatures(event.point);
-            inspectedFeatures.set({ features, clicked: false, coords: event.lngLat.toArray() });
+            inspectedFeatures.set({
+              features,
+              clicked: false,
+              coords: event.lngLat.toArray(),
+            });
           }
         };
         map.on("mousemove", mousemove);
         const mouseclick = (event) => {
           const features = map.queryRenderedFeatures(event.point);
-          inspectedFeatures.set({ features, clicked: true, coords: event.lngLat.toArray() });
+          inspectedFeatures.set({
+            features,
+            clicked: true,
+            coords: event.lngLat.toArray(),
+          });
         };
         map.on("click", mouseclick);
         unregisterListeners.push(() => {
