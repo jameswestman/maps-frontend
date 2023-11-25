@@ -30,3 +30,13 @@ for (const result of generated) {
   const kb = (result.buffer.length / 1024).toFixed(1);
   console.log(`Wrote ${kb}KiB to ${outputPng}`);
 }
+
+console.log("Creating icons.json");
+const iconsJson = {};
+for (const file of await glob("./src/thirdparty/map-style/icons/*.svg")) {
+  iconsJson[path.parse(file).name] = await fs.readFile(file, "utf8");
+}
+await fs.writeFile(
+  "./public/sprites/icons.json",
+  JSON.stringify(iconsJson, null, 2)
+);
