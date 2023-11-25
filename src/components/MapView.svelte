@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TinySDF from "../thirdparty/tiny-sdf";
   import * as shieldlib from "@americana/maplibre-shield-generator";
   import {
     Map,
@@ -32,7 +33,6 @@
   }
 
   onMount(() => {
-    console.log($resolvedTheme);
     map = new Map({
       container: mapContainer,
       style: `https://tiles.maps.jwestman.net/styles/${$resolvedTheme}/style.json`,
@@ -54,6 +54,26 @@
     [lng, lat] = map.getCenter().toArray();
 
     updateMapStyle(map, $theme);
+
+    const iconsPromise = fetch("/sprites/icons.json").then((r) => r.json());
+    map.on("styleimagemissing", async (event) => {
+      if (event.id.endsWith("-symbolic")) {
+        const icons = await iconsPromise;
+        const i = await new TinySDF().draw(
+          (ctx, buf) =>
+            new Promise((resolve) => {
+              const image = new Image();
+              image.onload = () => {
+                ctx.drawImage(image, buf, buf);
+                resolve(image);
+              };
+              image.src = `data:image/svg+xml;base64,${btoa(icons[event.id])}`;
+            })
+        );
+
+        if (!map.hasImage(event.id)) map.addImage(event.id, i, { sdf: true });
+      }
+    });
 
     new shieldlib.ShieldRenderer(loadShields(), shield_format.routeParser)
       .filterImageID(shield_format.shieldPredicate)
