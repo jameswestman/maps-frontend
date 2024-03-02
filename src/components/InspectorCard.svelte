@@ -1,27 +1,24 @@
 <script lang="ts">
   import { Button, Card, ListGroup, ListGroupItem } from "sveltestrap";
   import { inspectedFeatures } from "../inspector";
-  import { resolvedTheme } from "../theme";
 </script>
 
-{#if $inspectedFeatures.features.length > 0}
-  <Card>
-    <div class="card-header d-flex justify-content-between">
-      <span class="tnum">
-        {$inspectedFeatures.coords[0].toFixed(5)},
-        {$inspectedFeatures.coords[1].toFixed(5)}
-      </span>
+<Card>
+  <div class="card-header d-flex justify-content-between">
+    <span class="tnum">
+      {$inspectedFeatures.coords[0].toFixed(5)},
+      {$inspectedFeatures.coords[1].toFixed(5)}
+    </span>
 
-      {#if $inspectedFeatures.clicked}
-        <Button
-          close
-          class="align-middle"
-          on:click={() =>
-            ($inspectedFeatures = { features: [], clicked: false })}
-        />
-      {/if}
-    </div>
-
+    {#if $inspectedFeatures.clicked}
+      <Button
+        close
+        class="align-middle"
+        on:click={() => ($inspectedFeatures = { features: [], clicked: false })}
+      />
+    {/if}
+  </div>
+  {#if $inspectedFeatures.features.length > 0}
     <ListGroup flush>
       {#each $inspectedFeatures.features as feature}
         <ListGroupItem>
@@ -41,5 +38,11 @@
         </ListGroupItem>
       {/each}
     </ListGroup>
-  </Card>
-{/if}
+  {/if}
+</Card>
+
+<style>
+  .card-header:last-child {
+    border-bottom: none;
+  }
+</style>
