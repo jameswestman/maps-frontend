@@ -653,6 +653,12 @@ export function loadShields() {
       ))
   );
 
+  // Arizona
+  shields["US:AZ:Scenic"] = {
+    spriteBlank: "shield_us_az_scenic",
+    notext: true,
+  };
+
   // Arkansas
   shields["US:AR"] = {
     spriteBlank: ["shield_us_ar_2", "shield_us_ar_3"],
@@ -841,6 +847,10 @@ export function loadShields() {
     Color.shields.green,
     Color.shields.white
   );
+  shields["US:CO:Weld:WCP"] = {
+    ...pentagonUpShield(3, 15, Color.shields.blue, Color.shields.green),
+    textHaloColor: Color.shields.white,
+  };
 
   // Connecticut
   shields["US:CT"] = roundedRectShield(
@@ -1632,6 +1642,13 @@ export function loadShields() {
     ["TRK"],
     Color.shields.blue
   );
+  ["Sussex", "Warren"].forEach(
+    (county) =>
+      (shields[`US:NJ:${county}:NPS`] = pillShield(
+        Color.shields.brown,
+        Color.shields.white
+      ))
+  );
 
   // New Mexico
   shields["US:NM"] = pillShield(
@@ -2236,6 +2253,10 @@ export function loadShields() {
       bottom: 8,
     },
   };
+  shields["US:SD:Custer:NPS"] = roundedRectShield(
+    Color.shields.brown,
+    Color.shields.yellow
+  );
 
   // Tennessee
   shields["US:TN:primary"] = {
@@ -3146,9 +3167,7 @@ export function loadShields() {
   // EUROPE
   shields["e-road"] = roundedRectShield(
     Color.shields.green,
-    Color.shields.white,
-    Color.shields.white,
-    34
+    Color.shields.white
   );
 
   // Austria
@@ -3196,6 +3215,10 @@ export function loadShields() {
     shields["BE:B-road"] =
     shields["BE:R-road"] =
       roundedRectShield(Color.shields.white, Color.shields.black);
+  shields["BE:VLG:Ring_Antwerpen"] = roundedRectShield(
+    Color.shields.yellow,
+    Color.shields.black
+  );
 
   // Bulgaria
   shields["bg:motorway"] = roundedRectShield(
@@ -3318,6 +3341,7 @@ export function loadShields() {
 
   shields["omt-ie-national"] = roundedRectShield(
     Color.shields.green,
+    Color.shields.white,
     Color.shields.yellow
   );
 
@@ -3388,10 +3412,10 @@ export function loadShields() {
     34
   );
 
-  // Netherlands
+  // Netherlands, Kingdom of the (European Netherlands, Aruba, and Curacao)
   // https://wiki.openstreetmap.org/wiki/The_Netherlands_road_network
   shields["NL:A"] = roundedRectShield(Color.shields.red, Color.shields.white);
-  shields["NL:N"] = roundedRectShield(
+  shields["NL:N"] = shields["AW:route"] = roundedRectShield(
     Color.shields.yellow,
     Color.shields.black
   );
@@ -3413,7 +3437,7 @@ export function loadShields() {
     "Rotterdam",
     "Zaanstad",
   ].forEach((city) => (shields[`NL:S:${city}`] = nlCityRoute));
-  shields["NL:binnenstedelijke_ring"] = nlCityRoute; // for both Netherlands and Curacao
+  shields["NL:binnenstedelijke_ring"] = nlCityRoute; // for both European Netherlands and Curacao
   [
     "Ommen",
     "Schouwen",
@@ -3533,6 +3557,7 @@ export function loadShields() {
 
   shields["omt-gb-trunk"] = roundedRectShield(
     Color.shields.green,
+    Color.shields.white,
     Color.shields.yellow
   );
 
