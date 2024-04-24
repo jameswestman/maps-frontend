@@ -41,6 +41,8 @@
         "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>",
     });
 
+    window['map'] = map;
+
     map.addControl(new NavigationControl());
     geolocate = new GeolocateControl({
       positionOptions: {
