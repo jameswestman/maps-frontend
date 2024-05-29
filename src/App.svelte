@@ -6,6 +6,7 @@
   import ThemeSwitcher from "./components/ThemeSwitcher.svelte";
   import InspectorCard from "./components/InspectorCard.svelte";
   import { resolvedTheme } from "./theme";
+  import Attribution from "./components/Attribution.svelte";
 
   let zoom = 0;
   let lat = 0;
@@ -44,4 +45,6 @@
       </div>
     </div>
   </div>
+
+  <Attribution/>
 </div>

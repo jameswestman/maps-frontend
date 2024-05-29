@@ -10,7 +10,7 @@
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
-  import { resolvedTheme, theme, updateMapStyle } from "../theme";
+  import { theme, updateMapStyle } from "../theme";
   import { loadShields } from "../thirdparty/openstreetmap-americana/src/js/shield_defs";
   import * as shield_format from "../thirdparty/openstreetmap-americana/src/js/shield_format";
   import * as highway_shield from "../thirdparty/openstreetmap-americana/src/layer/highway_shield";
@@ -35,13 +35,17 @@
   onMount(() => {
     map = new Map({
       container: mapContainer,
-      style: `https://tiles.maps.jwestman.net/styles/${$resolvedTheme}/style.json`,
+      style: {
+        version: 8,
+        sources: {},
+        layers: [],
+      },
       hash: true,
       customAttribution:
-        "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>",
+        "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>, <a href='javascript:void(showAttributionDialog());'>other sources</a>",
     });
 
-    window['map'] = map;
+    window["map"] = map;
 
     map.addControl(new NavigationControl());
     geolocate = new GeolocateControl({

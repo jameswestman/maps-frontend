@@ -2,6 +2,7 @@ import type { Map } from "maplibre-gl";
 import { persisted } from "svelte-local-storage-store";
 import { derived } from "svelte/store";
 import { createInspector } from "./inspector";
+import { generateMapStyle } from "./thirdparty/map-style/src/mapStyle";
 
 export enum ThemeVariant {
   SYSTEM,
@@ -37,16 +38,16 @@ export const resolvedTheme = derived(theme, (theme) =>
 );
 
 export const updateMapStyle = (map: Map, theme: Theme) => {
-  if (!map)
-    return;
+  if (!map) return;
 
   if (theme.inspector) {
     createInspector(map, resolveThemeVariant(theme) === "dark");
   } else {
-    map.setStyle(
-      `https://tiles.maps.jwestman.net/styles/${resolveThemeVariant(
-        theme
-      )}/style.json`
-    );
+    const style = generateMapStyle({
+      colorScheme: theme.variant === ThemeVariant.DARK ? "dark" : "light",
+      renderer: "maplibre-gl-js",
+      textScale: 1,
+    });
+    map.setStyle(style);
   }
 };
