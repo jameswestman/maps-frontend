@@ -103,6 +103,20 @@ export const DEFS = {
             light: "#f2e3cb",
         },
     },
+    hillshade: {
+        shadow: {
+            light: "#473b24",
+            dark: "#000000"
+        },
+        highlight: {
+            light: "#ffffff",
+            dark: "#444444"
+        },
+        accent: {
+            light: "#000000",
+            dark: "#000000"
+        }
+    },
     places: [
         {
             classes: ["continent"],

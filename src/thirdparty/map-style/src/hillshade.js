@@ -15,13 +15,17 @@
  * License along with this library; if not, see <https://www.gnu.org/licenses/>.
  */
 
+import { DEFS } from "./defs";
+
 export const hillshadeLayer = (config) => ({
   id: "hillshade",
   type: "hillshade",
   source: "terrain",
   layout: {},
   paint: {
-    "hillshade-shadow-color": "#473b24",
+    "hillshade-shadow-color": config.pick(DEFS.hillshade.shadow),
+    "hillshade-accent-color": config.pick(DEFS.hillshade.accent),
+    "hillshade-highlight-color": config.pick(DEFS.hillshade.highlight),
     "hillshade-exaggeration": {
       stops: [
         [0, 0.5],
