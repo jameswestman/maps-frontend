@@ -1,13 +1,13 @@
 <script lang="ts">
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-  import type { Feature } from "maplibre-gl";
+  import type { Feature, MapGeoJSONFeature } from "maplibre-gl";
   import { Card, CardBody } from "sveltestrap";
   import { resolvedTheme } from "../theme";
   import { fetchBlurb, fetchWikidata } from "../wikidata";
 
-  export let feature: Feature;
+  export let feature: MapGeoJSONFeature;
 
-  let lastFeature: Feature;
+  let lastFeature: MapGeoJSONFeature;
 
   let wikipediaBlurb: string;
   let wikipediaUrl: string;

@@ -38,6 +38,8 @@ export const housenumbers = (config) => ({
     },
     paint: {
         "text-color": config.pick(DEFS.housenumbers),
+        "text-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+        "text-halo-width": ["case", ["feature-state", "selected"], 1, 0],
     },
     metadata: {
         "libshumate:cursor": "pointer",

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Feature } from "maplibre-gl";
+  import type { MapGeoJSONFeature } from "maplibre-gl";
   import MapView from "./components/MapView.svelte";
   import OpenInCard from "./components/OpenInCard.svelte";
   import PlaceCard from "./components/PlaceCard.svelte";
@@ -12,7 +12,7 @@
   let lat = 0;
   let lng = 0;
 
-  let selectedFeature: Feature;
+  let selectedFeature: MapGeoJSONFeature;
 </script>
 
 <div data-bs-theme={$resolvedTheme}>

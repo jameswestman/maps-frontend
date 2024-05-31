@@ -121,6 +121,10 @@ export const pois = (config) => {
             paint: {
                 "icon-color": color,
                 "text-color": color,
+                "text-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+                "text-halo-width": ["case", ["feature-state", "selected"], 1, 0],
+                "icon-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+                "icon-halo-width": ["case", ["feature-state", "selected"], 1, 0],
             },
             metadata: {
                 "libshumate:cursor": "pointer",

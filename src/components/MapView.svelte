@@ -4,9 +4,9 @@
   import {
     Map,
     MapMouseEvent,
-    type Feature,
     GeolocateControl,
     NavigationControl,
+    type MapGeoJSONFeature,
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
@@ -19,7 +19,7 @@
   export let zoom = 0;
   export let lat = 0;
   export let lng = 0;
-  export let selectedFeature: Feature;
+  export let selectedFeature: MapGeoJSONFeature;
 
   let map: Map;
   let mapContainer: HTMLElement;
@@ -31,6 +31,16 @@
     });
     onDestroy(unsubscribe);
   }
+
+  const selectFeature = (feature: MapGeoJSONFeature) => {
+    if (selectedFeature) {
+      map.setFeatureState(selectedFeature, { selected: false });
+    }
+    selectedFeature = feature;
+    if (feature) {
+      map.setFeatureState(selectedFeature, { selected: true });
+    }
+  };
 
   onMount(() => {
     map = new Map({
@@ -134,7 +144,7 @@
           );
 
           const click = (event) => {
-            selectedFeature = event.features[0];
+            selectFeature(event.features[0]);
           };
           map.on("click", layer.id, click);
           unregisterListeners.push(() => map.off("click", layer.id, click));
