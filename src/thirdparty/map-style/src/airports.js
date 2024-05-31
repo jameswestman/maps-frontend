@@ -102,6 +102,10 @@ export const airportSymbols = (config) => {
     const commonPaint = {
         "icon-color": config.pick(DEFS.airports.symbolColor),
         "text-color": config.pick(DEFS.airports.symbolColor),
+        "text-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+        "text-halo-width": ["case", ["feature-state", "selected"], 1, 0],
+        "icon-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+        "icon-halo-width": ["case", ["feature-state", "selected"], 1, 0],
     };
     const minorAirportFilter = [
         "any",
@@ -126,6 +130,8 @@ export const airportSymbols = (config) => {
             },
             paint: {
                 "text-color": config.pick(DEFS.airports.symbolColor),
+                "text-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
+                "text-halo-width": ["case", ["feature-state", "selected"], 1, 0],
             },
             metadata: {
                 "libshumate:cursor": "pointer",
