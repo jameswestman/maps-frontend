@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Card, ListGroup, ListGroupItem } from "sveltestrap";
+  import { Button, Card, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
   import { inspectedFeatures } from "../inspector";
 </script>
 

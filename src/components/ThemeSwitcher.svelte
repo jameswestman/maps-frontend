@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ThemeVariant, theme, resolvedTheme } from "../theme";
-  import { Button, ButtonGroup } from "sveltestrap";
+  import { Button, ButtonGroup } from "@sveltestrap/sveltestrap";
 </script>
 
 <ButtonGroup class="w-100">

@@ -34,4 +34,4 @@ export const addMapLayerAbove = (
 
 export const getLangCode = () => {
   return navigator.language.split("-")[0];
-}
+};

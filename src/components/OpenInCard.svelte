@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, CardBody, Input } from "sveltestrap";
+  import { Card, CardBody, Input } from "@sveltestrap/sveltestrap";
   import { resolvedTheme, theme } from "../theme";
 
   export let zoom: number;

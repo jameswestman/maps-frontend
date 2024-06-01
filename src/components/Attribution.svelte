@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Modal, ModalBody, ModalHeader } from "sveltestrap";
+  import { Modal, ModalBody, ModalHeader } from "@sveltestrap/sveltestrap";
 
   let isOpen = false;
   const toggle = () => {

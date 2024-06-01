@@ -2,8 +2,8 @@ import type { FeatureIdentifier } from "maplibre-gl";
 
 export class Place {
   public readonly name?: string;
-  public readonly location?: [number, number];
-  public readonly tags?: { [key: string]: string };
+  public readonly location: [number, number];
+  public readonly tags: { [key: string]: string };
   public readonly featureId?: FeatureIdentifier;
 
   constructor({
@@ -13,7 +13,7 @@ export class Place {
     featureId,
   }: {
     name?: string;
-    location?: [number, number];
+    location: [number, number];
     tags?: { [key: string]: string };
     featureId?: FeatureIdentifier;
   }) {

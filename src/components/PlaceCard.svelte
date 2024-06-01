@@ -1,6 +1,6 @@
 <script lang="ts">
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-  import { Card, CardBody } from "sveltestrap";
+  import { Card, CardBody } from "@sveltestrap/sveltestrap";
   import type { Place } from "../Place";
   import { resolvedTheme } from "../theme";
   import { getLangCode } from "../utils";
