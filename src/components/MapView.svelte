@@ -68,7 +68,14 @@
     onDestroy(unsubscribe);
   }
 
-  const selectPlace = (place: Place) => {
+  let placeAbort: AbortController;
+
+  const selectPlace = async (place: Place | Promise<Place>) => {
+    if (placeAbort) {
+      placeAbort.abort();
+      placeAbort = null;
+    }
+
     if (selectedMarker) {
       selectedMarker.remove();
     }
@@ -78,6 +85,14 @@
       if (selectedPlace.featureId) {
         map.setFeatureState(selectedPlace.featureId, { selected: false });
       }
+    }
+
+    if (place instanceof Promise) {
+      selectPlace(null);
+
+      const abort = (placeAbort = new AbortController());
+      place = await place;
+      if (abort.signal.aborted) return;
     }
 
     selectedPlace = place;
@@ -227,7 +242,30 @@
           inspectedFeatures.set({ features: [], clicked: false });
         });
       } else {
-        const click = (event) => {
+        const click = (event: MapMouseEvent) => {
+          if (event.originalEvent.target instanceof HTMLElement) {
+            const target = event.originalEvent.target as HTMLElement;
+            const marker = target.closest(".maplibregl-user-location-dot");
+            if (marker) {
+              selectPlace(
+                new Promise((resolve, reject) => {
+                  navigator.geolocation.getCurrentPosition((position) => {
+                    resolve(
+                      new Place({
+                        name: "Current Location",
+                        location: [
+                          position.coords.longitude,
+                          position.coords.latitude,
+                        ],
+                      })
+                    );
+                  });
+                })
+              );
+              return;
+            }
+          }
+
           const features: MapGeoJSONFeature[] = map
             .queryRenderedFeatures(event.point)
             .filter((f) => f.layer.metadata?.["libshumate:cursor"]);
