@@ -104,8 +104,10 @@
         layers: [],
       },
       hash: true,
-      customAttribution:
-        "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>, <a href='javascript:void(showAttributionDialog());'>other sources</a>",
+      attributionControl: {
+        customAttribution:
+          "<a href='https://openmaptiles.org/' target='_blank'>&copy; OpenMapTiles</a> <a href='https://www.openstreetmap.org/copyright' target='_blank'>&copy; OpenStreetMap contributors</a>, <a href='javascript:void(showAttributionDialog());'>other sources</a>",
+      },
     });
 
     window["map"] = map;
