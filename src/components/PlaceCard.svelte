@@ -4,10 +4,11 @@
   import { Card, CardBody } from "sveltestrap";
   import { resolvedTheme } from "../theme";
   import { fetchBlurb, fetchWikidata } from "../wikidata";
+  import type { Place } from "../Place";
 
-  export let feature: MapGeoJSONFeature;
+  export let place: Place;
 
-  let lastFeature: MapGeoJSONFeature;
+  let lastPlace: Place;
 
   let wikipediaBlurb: string;
   let wikipediaUrl: string;
@@ -16,15 +17,15 @@
   let population: number;
 
   $: {
-    if (feature !== lastFeature) {
-      lastFeature = feature;
+    if (place !== lastPlace) {
+      lastPlace = place;
 
-      population = parseInt(feature?.properties["osm:population"]);
+      population = parseInt(place?.tags["osm:population"]);
       image = undefined;
       wikipediaBlurb = undefined;
       wikipediaUrl = undefined;
 
-      const qid = feature?.properties["osm:wikidata"];
+      const qid = place?.tags["osm:wikidata"];
       if (qid) {
         (async () => {
           const entity = await fetchWikidata(qid);
@@ -41,12 +42,12 @@
   }
 </script>
 
-{#if feature}
+{#if place}
   <Card class="scroll">
     <CardBody>
       <span class="d-flex flex-row">
         <h3 class="mb-0">
-          {feature.properties["name"] ?? feature.properties["ref"]}
+          {place.tags["name"] ?? place.tags["ref"]}
         </h3>
         <span class="flex-grow-1" />
         <button
@@ -54,7 +55,7 @@
           class="btn-close"
           aria-label="Close"
           class:btn-close-white={$resolvedTheme === "dark"}
-          on:click={() => (feature = undefined)}
+          on:click={() => (place = undefined)}
         />
       </span>
     </CardBody>

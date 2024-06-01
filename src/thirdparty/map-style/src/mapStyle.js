@@ -69,16 +69,12 @@ export function generateMapStyle(options) {
     sources: {
       "vector-tiles": {
         type: "vector",
-        tiles: ["https://tiles.maps.jwestman.net/data/streets_v3/{z}/{x}/{y}.pbf"],
-        minzoom: 0,
-        maxzoom: 14,
+        url: "https://tiles.maps.jwestman.net/data/streets_v3.json",
       },
-      "terrain": {
+      terrain: {
         type: "raster-dem",
-        tiles: [
-          "https://tiles.maps.jwestman.net/data/terrain/{z}/{x}/{y}.webp",
-        ],
-      }
+        url: "https://tiles.maps.jwestman.net/data/terrain.json",
+      },
     },
     /* Not used by libshumate, but necessary for Mapbox GL JS */
     glyphs: "https://tiles.maps.jwestman.net/fonts/{fontstack}/{range}.pbf",
@@ -113,14 +109,14 @@ export function generateMapStyle(options) {
 
   const removeUndefined = (obj) => {
     if (!obj) {
-        return;
+      return;
     }
     for (const key of Object.keys(obj)) {
-        if (obj[key] === undefined) {
-            delete obj[key];
-        }
+      if (obj[key] === undefined) {
+        delete obj[key];
+      }
     }
-  }
+  };
 
   for (const layer of style.layers) {
     removeUndefined(layer);

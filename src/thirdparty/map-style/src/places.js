@@ -48,5 +48,6 @@ export const places = (config) =>
         },
         metadata: {
             "libshumate:cursor": "pointer",
+            category: "place",
         },
     }));

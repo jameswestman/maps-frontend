@@ -128,6 +128,7 @@ export const pois = (config) => {
             },
             metadata: {
                 "libshumate:cursor": "pointer",
+                category: "poi",
             },
         },
     ];

@@ -9,21 +9,54 @@
     type MapGeoJSONFeature,
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
-  import { onDestroy, onMount } from "svelte";
-  import { theme, updateMapStyle } from "../theme";
+  import { getContext, onDestroy, onMount } from "svelte";
+  import {
+    ThemeVariant,
+    resolveThemeVariant,
+    theme,
+    type Theme,
+  } from "../theme";
   import { loadShields } from "../thirdparty/openstreetmap-americana/src/js/shield_defs";
   import * as shield_format from "../thirdparty/openstreetmap-americana/src/js/shield_format";
   import * as highway_shield from "../thirdparty/openstreetmap-americana/src/layer/highway_shield";
-  import { inspectedFeatures } from "../inspector";
+  import { createInspector, inspectedFeatures } from "../inspector";
+  import type { Subsystem } from "../subsystems/Subsystem";
+  import { generateMapStyle } from "../thirdparty/map-style/src/mapStyle";
+  import { Place } from "../Place";
 
   export let zoom = 0;
   export let lat = 0;
   export let lng = 0;
-  export let selectedFeature: MapGeoJSONFeature;
+  export let selectedPlace: Place;
 
   let map: Map;
   let mapContainer: HTMLElement;
   let geolocate: GeolocateControl;
+
+  const subsystems: Subsystem[] = getContext("subsystems");
+
+  const updateMapStyle = async (map: Map, theme: Theme) => {
+    if (!map) return;
+
+    if (theme.inspector) {
+      const style = await createInspector(
+        resolveThemeVariant(theme) === "dark"
+      );
+      map.setStyle(style, { diff: false });
+    } else {
+      const style = generateMapStyle({
+        colorScheme: theme.variant === ThemeVariant.DARK ? "dark" : "light",
+        renderer: "maplibre-gl-js",
+        textScale: 1,
+      });
+
+      map.setStyle(style);
+    }
+
+    map.once("styledata", () => {
+      subsystems.forEach((subsystem) => subsystem.setupMapStyle(map, theme));
+    });
+  };
 
   {
     const unsubscribe = theme.subscribe((newTheme) => {
@@ -32,13 +65,21 @@
     onDestroy(unsubscribe);
   }
 
-  const selectFeature = (feature: MapGeoJSONFeature) => {
-    if (selectedFeature) {
-      map.setFeatureState(selectedFeature, { selected: false });
+  const selectPlace = (place: Place) => {
+    if (selectedPlace) {
+      subsystems.forEach((subsystem) =>
+        subsystem.placeDeselected(selectedPlace)
+      );
+      if (selectedPlace.featureId) {
+        map.setFeatureState(selectedPlace.featureId, { selected: false });
+      }
     }
-    selectedFeature = feature;
-    if (feature) {
-      map.setFeatureState(selectedFeature, { selected: true });
+    selectedPlace = place;
+    if (place) {
+      if (place.featureId) {
+        map.setFeatureState(selectedPlace.featureId, { selected: true });
+      }
+      subsystems.forEach((subsystem) => subsystem.placeSelected(place));
     }
   };
 
@@ -144,7 +185,18 @@
           );
 
           const click = (event) => {
-            selectFeature(event.features[0]);
+            const feature: MapGeoJSONFeature = event.features[0];
+            selectPlace(
+              new Place({
+                featureId: {
+                  source: feature.source,
+                  id: feature.id,
+                  sourceLayer: feature.sourceLayer,
+                },
+                location: event.lngLat.toArray(),
+                tags: feature.properties,
+              })
+            );
           };
           map.on("click", layer.id, click);
           unregisterListeners.push(() => map.off("click", layer.id, click));

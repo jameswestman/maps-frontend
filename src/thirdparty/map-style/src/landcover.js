@@ -34,4 +34,7 @@ export const landcover = (config) => ({
             config.colorMatch(DEFS.landcover, "transparent"),
         ],
     },
+    metadata: {
+        category: "landcover",
+    },
 });

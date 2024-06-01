@@ -1,13 +1,10 @@
-import type {
-  Feature,
-  Map,
-  MapGeoJSONFeature,
-  StyleSpecification,
-} from "maplibre-gl";
-import { brightColor } from "./thirdparty/maplibre-gl-inspect/colors";
+import type { MapGeoJSONFeature, StyleSpecification } from "maplibre-gl";
 import { writable } from "svelte/store";
+import { brightColor } from "./thirdparty/maplibre-gl-inspect/colors";
 
-export const createInspector = async (map: Map, dark: boolean) => {
+export const createInspector = async (
+  dark: boolean
+): Promise<StyleSpecification> => {
   const tileJson = await (
     await fetch("https://tiles.maps.jwestman.net/data/streets_v3.json")
   ).json();
@@ -115,39 +112,36 @@ export const createInspector = async (map: Map, dark: boolean) => {
     });
   }
 
-  map.setStyle(
-    {
-      version: 8,
-      sources: {
-        tiles: {
-          type: "vector",
-          tiles: [
-            "https://tiles.maps.jwestman.net/data/streets_v3/{z}/{x}/{y}.pbf",
-          ],
-          minzoom: 0,
-          maxzoom: 14,
-        },
+  return {
+    version: 8,
+    sources: {
+      tiles: {
+        type: "vector",
+        tiles: [
+          "https://tiles.maps.jwestman.net/data/streets_v3/{z}/{x}/{y}.pbf",
+        ],
+        minzoom: 0,
+        maxzoom: 14,
       },
-      glyphs: "https://tiles.maps.jwestman.net/fonts/{fontstack}/{range}.pbf",
-      metadata: {
-        inspector: true,
-      },
-      layers: [
-        {
-          id: "background",
-          type: "background",
-          paint: {
-            "background-color": dark ? "#111" : "#eee",
-          },
-        },
-        ...fills,
-        ...lines,
-        ...circles,
-        ...symbols,
-      ],
     },
-    { diff: false }
-  );
+    glyphs: "https://tiles.maps.jwestman.net/fonts/{fontstack}/{range}.pbf",
+    metadata: {
+      inspector: true,
+    },
+    layers: [
+      {
+        id: "background",
+        type: "background",
+        paint: {
+          "background-color": dark ? "#111" : "#eee",
+        },
+      },
+      ...fills,
+      ...lines,
+      ...circles,
+      ...symbols,
+    ],
+  };
 };
 
 export interface InspectionState {
