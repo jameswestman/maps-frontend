@@ -1,6 +1,7 @@
 import type { Map } from "maplibre-gl";
 import type { Place } from "../Place";
 import type { Theme } from "src/theme";
+import type { ComponentType } from "svelte";
 
 export class Subsystem {
   public onMount() {}
@@ -12,6 +13,10 @@ export class Subsystem {
   public placeSelected(place: Place) {}
 
   public placeDeselected(place: Place) {}
+
+  public placeCardComponents(): PlaceCardComponent[] {
+    return [];
+  }
 }
 
 export class Subsystems {
@@ -37,6 +42,15 @@ export class Subsystems {
     this.call((s) => s.placeDeselected(place));
   }
 
+  public placeCardComponents(): PlaceCardComponent[] {
+    const components: PlaceCardComponent[] = [];
+    this.call((s) => {
+      components.push(...s.placeCardComponents());
+    });
+    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    return components;
+  }
+
   public call(f: (subsystem: Subsystem) => void) {
     this.subsystems.forEach((s) => {
       try {
@@ -46,4 +60,9 @@ export class Subsystems {
       }
     });
   }
+}
+
+export interface PlaceCardComponent {
+  component: ComponentType;
+  order?: number;
 }

@@ -7,9 +7,10 @@
   import OpenInCard from "./components/OpenInCard.svelte";
   import PlaceCard from "./components/PlaceCard.svelte";
   import ThemeSwitcher from "./components/ThemeSwitcher.svelte";
-  import { Isochrone } from "./subsystems/isochrone/Isochrone";
+  import { Isochrone } from "./subsystems/isochrone/IsochroneSubsystem";
   import { resolvedTheme } from "./theme";
   import { Subsystems } from "./subsystems/Subsystem";
+  import { WikipediaSubsystem } from "./subsystems/wikipedia/WikipediaSubsystem";
 
   let zoom = 0;
   let lat = 0;
@@ -19,6 +20,7 @@
 
   let subsystems = new Subsystems([
     new Isochrone(),
+    new WikipediaSubsystem(),
   ]);
 
   setContext("subsystems", subsystems);

@@ -4,40 +4,23 @@
   import type { Place } from "../Place";
   import { resolvedTheme } from "../theme";
   import { getLangCode } from "../utils";
-  import { fetchBlurb, fetchWikidata } from "../wikidata";
+  import { getContext } from "svelte";
+  import type { Subsystems } from "src/subsystems/Subsystem";
 
   export let place: Place;
 
+  const subsystems: Subsystems = getContext("subsystems");
+  const components = subsystems.placeCardComponents();
+  console.log(components);
+
   let lastPlace: Place;
 
-  let wikipediaBlurb: string;
-  let wikipediaUrl: string;
-  let image: string;
-  let imageUrl: string;
   let population: number;
 
   $: {
     if (place !== lastPlace) {
       lastPlace = place;
-
       population = parseInt(place?.tags["osm:population"]);
-      image = undefined;
-      wikipediaBlurb = undefined;
-      wikipediaUrl = undefined;
-
-      const qid = place?.tags["osm:wikidata"];
-      if (qid) {
-        (async () => {
-          const entity = await fetchWikidata(qid);
-          [wikipediaBlurb, wikipediaUrl] = await fetchBlurb(entity);
-
-          if ("P18" in entity.claims) {
-            const fileName = entity.claims["P18"][0].mainsnak.datavalue.value;
-            image = `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${fileName}&width=400`;
-            imageUrl = `https://commons.wikimedia.org/wiki/File:${fileName}`;
-          }
-        })();
-      }
     }
   }
 </script>
@@ -70,15 +53,8 @@
       </CardBody>
     {/if}
 
-    {#if wikipediaBlurb}
-      <CardBody>
-        {wikipediaBlurb}
-        <a href={wikipediaUrl} target="_blank">Wikipedia</a>
-      </CardBody>
-    {/if}
-
-    {#if image}
-      <img src={image} class="rounded-bottom" alt="" />
-    {/if}
+    {#each components as component}
+      <svelte:component this={component.component} {place} />
+    {/each}
   </Card>
 {/if}
