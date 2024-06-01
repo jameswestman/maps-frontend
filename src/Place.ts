@@ -19,7 +19,7 @@ export class Place {
   }) {
     this.name = name;
     this.location = location;
-    this.tags = tags;
+    this.tags = tags ?? {};
     this.featureId = featureId;
   }
 }

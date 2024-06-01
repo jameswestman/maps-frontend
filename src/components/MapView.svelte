@@ -7,6 +7,7 @@
     GeolocateControl,
     NavigationControl,
     type MapGeoJSONFeature,
+    Marker,
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { getContext, onDestroy, onMount } from "svelte";
@@ -20,7 +21,7 @@
   import * as shield_format from "../thirdparty/openstreetmap-americana/src/js/shield_format";
   import * as highway_shield from "../thirdparty/openstreetmap-americana/src/layer/highway_shield";
   import { createInspector, inspectedFeatures } from "../inspector";
-  import type { Subsystem } from "../subsystems/Subsystem";
+  import type { Subsystems } from "../subsystems/Subsystem";
   import { generateMapStyle } from "../thirdparty/map-style/src/mapStyle";
   import { Place } from "../Place";
 
@@ -29,11 +30,13 @@
   export let lng = 0;
   export let selectedPlace: Place;
 
+  let selectedMarker: Marker;
+
   let map: Map;
   let mapContainer: HTMLElement;
   let geolocate: GeolocateControl;
 
-  const subsystems: Subsystem[] = getContext("subsystems");
+  const subsystems: Subsystems = getContext("subsystems");
 
   const updateMapStyle = async (map: Map, theme: Theme) => {
     if (!map) return;
@@ -54,7 +57,7 @@
     }
 
     map.once("styledata", () => {
-      subsystems.forEach((subsystem) => subsystem.setupMapStyle(map, theme));
+      subsystems.setupMapStyle(map, theme);
     });
   };
 
@@ -66,20 +69,29 @@
   }
 
   const selectPlace = (place: Place) => {
+    if (selectedMarker) {
+      selectedMarker.remove();
+    }
+
     if (selectedPlace) {
-      subsystems.forEach((subsystem) =>
-        subsystem.placeDeselected(selectedPlace)
-      );
+      subsystems.placeDeselected(selectedPlace);
       if (selectedPlace.featureId) {
         map.setFeatureState(selectedPlace.featureId, { selected: false });
       }
     }
+
     selectedPlace = place;
+
     if (place) {
+      selectedMarker = new Marker().setLngLat(place.location).addTo(map);
+      selectedMarker.getElement().addEventListener("click", (ev) => {
+        ev.stopPropagation();
+      });
+
       if (place.featureId) {
         map.setFeatureState(selectedPlace.featureId, { selected: true });
       }
-      subsystems.forEach((subsystem) => subsystem.placeSelected(place));
+      subsystems.placeSelected(place);
     }
   };
 
@@ -183,23 +195,6 @@
           unregisterListeners.push(() =>
             map.off("mouseleave", layer.id, mouseleave)
           );
-
-          const click = (event) => {
-            const feature: MapGeoJSONFeature = event.features[0];
-            selectPlace(
-              new Place({
-                featureId: {
-                  source: feature.source,
-                  id: feature.id,
-                  sourceLayer: feature.sourceLayer,
-                },
-                location: event.lngLat.toArray(),
-                tags: feature.properties,
-              })
-            );
-          };
-          map.on("click", layer.id, click);
-          unregisterListeners.push(() => map.off("click", layer.id, click));
         }
       }
 
@@ -229,6 +224,39 @@
           map.off("click", mouseclick);
           inspectedFeatures.set({ features: [], clicked: false });
         });
+      } else {
+        const click = (event) => {
+          const features: MapGeoJSONFeature[] = map
+            .queryRenderedFeatures(event.point)
+            .filter((f) => f.layer.metadata?.["libshumate:cursor"]);
+
+          if (features.length === 0) {
+            selectPlace(
+              new Place({
+                name: "Dropped Pin",
+                location: event.lngLat.toArray(),
+              })
+            );
+          } else {
+            const feature = features[0];
+            selectPlace(
+              new Place({
+                featureId: {
+                  id: feature.id,
+                  source: feature.source,
+                  sourceLayer: feature.sourceLayer,
+                },
+                location:
+                  feature.geometry.type === "Point"
+                    ? (feature.geometry.coordinates as [number, number])
+                    : event.lngLat.toArray(),
+                tags: feature.properties,
+              })
+            );
+          }
+        };
+        map.on("click", click);
+        unregisterListeners.push(() => map.off("click", click));
       }
 
       if (!map.getLayer("highway-shield") && !isInspector) {

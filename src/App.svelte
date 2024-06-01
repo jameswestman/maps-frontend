@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { MapGeoJSONFeature } from "maplibre-gl";
+  import { onMount, setContext } from "svelte";
+  import type { Place } from "./Place";
+  import Attribution from "./components/Attribution.svelte";
+  import InspectorCard from "./components/InspectorCard.svelte";
   import MapView from "./components/MapView.svelte";
   import OpenInCard from "./components/OpenInCard.svelte";
   import PlaceCard from "./components/PlaceCard.svelte";
   import ThemeSwitcher from "./components/ThemeSwitcher.svelte";
-  import InspectorCard from "./components/InspectorCard.svelte";
-  import { resolvedTheme } from "./theme";
-  import Attribution from "./components/Attribution.svelte";
   import { Isochrone } from "./subsystems/isochrone/Isochrone";
-  import { onMount, setContext } from "svelte";
-  import type { Place } from "./Place";
+  import { resolvedTheme } from "./theme";
+  import { Subsystems } from "./subsystems/Subsystem";
 
   let zoom = 0;
   let lat = 0;
@@ -17,13 +17,15 @@
 
   let selectedFeature: Place;
 
-  let subsystems = [new Isochrone()];
+  let subsystems = new Subsystems([
+    new Isochrone(),
+  ]);
 
   setContext("subsystems", subsystems);
 
   onMount(() => {
-    subsystems.forEach((subsystem) => subsystem.onMount());
-    return () => subsystems.forEach((subsystem) => subsystem.onDestroy());
+    subsystems.onMount();
+    return () => subsystems.onDestroy();
   });
 </script>
 

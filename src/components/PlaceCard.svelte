@@ -1,10 +1,10 @@
 <script lang="ts">
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-  import type { Feature, MapGeoJSONFeature } from "maplibre-gl";
   import { Card, CardBody } from "sveltestrap";
-  import { resolvedTheme } from "../theme";
-  import { fetchBlurb, fetchWikidata } from "../wikidata";
   import type { Place } from "../Place";
+  import { resolvedTheme } from "../theme";
+  import { getLangCode } from "../utils";
+  import { fetchBlurb, fetchWikidata } from "../wikidata";
 
   export let place: Place;
 
@@ -47,7 +47,10 @@
     <CardBody>
       <span class="d-flex flex-row">
         <h3 class="mb-0">
-          {place.tags["name"] ?? place.tags["ref"]}
+          {place.name ??
+            place.tags["name:" + getLangCode()] ??
+            place.tags["name"] ??
+            place.tags["ref"]}
         </h3>
         <span class="flex-grow-1" />
         <button

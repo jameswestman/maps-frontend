@@ -31,3 +31,7 @@ export const addMapLayerAbove = (
   }
   map.addLayer(layer, beforeId);
 };
+
+export const getLangCode = () => {
+  return navigator.language.split("-")[0];
+}

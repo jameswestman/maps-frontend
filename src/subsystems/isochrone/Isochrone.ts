@@ -28,6 +28,7 @@ export class Isochrone extends Subsystem {
       id: "isochrone-line",
       source: "isochrone",
       type: "line",
+      minzoom: 10,
       layout: {
         "line-cap": "round",
         "line-join": "round",
@@ -45,6 +46,7 @@ export class Isochrone extends Subsystem {
       id: "isochrone-symbol",
       source: "isochrone",
       type: "symbol",
+      minzoom: 10,
       layout: {
         "text-field": "{contour} minute walk",
         "symbol-placement": "line",
@@ -100,7 +102,12 @@ export class Isochrone extends Subsystem {
         "isochrone"
       ) as GeoJSONSource;
       if (source) {
-        source.setData(geojson);
+        source.setData(
+          geojson ?? {
+            type: "FeatureCollection",
+            features: [],
+          }
+        );
       }
     }
   }
