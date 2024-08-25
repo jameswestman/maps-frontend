@@ -25,9 +25,6 @@
     >
       Bing Maps
     </a>
-    <a href="https://qwant.com/maps#map={zoom}/{lat}/{lng}" target="_blank">
-      Qwant Maps
-    </a>
 
     <Input
       id="tile_inspector"
