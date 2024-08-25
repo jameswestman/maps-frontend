@@ -37,26 +37,72 @@ export const getLangCode = () => {
   return navigator.language.split("-")[0];
 };
 
+export interface TaskQueueStateInitial {
+  status: "initial";
+}
+
+export interface TaskQueueStateLoading {
+  status: "loading";
+}
+
+export interface TaskQueueStateSuccess<T> {
+  status: "success";
+  value: T;
+}
+
+export interface TaskQueueStateError {
+  status: "error";
+  error: Error;
+}
+
+export type TaskQueueState<T> =
+  | TaskQueueStateInitial
+  | TaskQueueStateLoading
+  | TaskQueueStateSuccess<T>
+  | TaskQueueStateError;
+
 export const taskQueue = <T>(): [
-  SvelteStore<T>,
+  SvelteStore<TaskQueueState<T>>,
   (f: T | ((abort: AbortController) => Promise<T>)) => void
 ] => {
-  const store = writable<T>();
+  const store = writable<TaskQueueState<T>>({ status: "initial" });
   let prevAbort: AbortController;
 
   const queue = (f: T | ((abort: AbortController) => Promise<T>)) => {
     prevAbort?.abort();
     const abort = (prevAbort = new AbortController());
     if (typeof f === "function") {
-      (f as (abort: AbortController) => Promise<T>)(abort).then((val) => {
-        if (!abort.signal.aborted) {
-          store.set(val);
-        }
-      });
+      store.set({ status: "loading" });
+      (f as (abort: AbortController) => Promise<T>)(abort)
+        .then((val) => {
+          if (!abort.signal.aborted) {
+            store.set({ value: val, status: "success" });
+          }
+        })
+        .catch((error) => {
+          if (!abort.signal.aborted) {
+            store.set({ error, status: "error" });
+          }
+        });
     } else {
-      store.set(f);
+      store.set({ value: f, status: "success" });
     }
   };
 
   return [readonly(store), queue];
+};
+
+export const getLocation = async (options?: PositionOptions) => {
+  return new Promise<GeolocationPosition>((resolve, reject) => {
+    // navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve(position);
+      },
+      (error) => {
+        reject(error);
+      },
+      options
+    );
+  });
 };

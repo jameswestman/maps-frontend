@@ -72,7 +72,7 @@ export class Isochrone extends Subsystem {
     (async () => {
       const geojson = await fetchIsochrone(
         {
-          locations: [{ lon: place.location[0], lat: place.location[1] }],
+          locations: [place.location],
           contours: [{ time: 5 }, { time: 10 }, { time: 15 }],
           costing: "pedestrian",
         },

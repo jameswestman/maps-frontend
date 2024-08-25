@@ -1,38 +1,40 @@
 <script lang="ts">
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-  import { Card, CardBody } from "@sveltestrap/sveltestrap";
-  import type { Place } from "../Place";
-  import { resolvedTheme } from "../theme";
-  import { getLangCode } from "../utils";
+  import { Card, CardBody, Spinner } from "@sveltestrap/sveltestrap";
+  import type { Place } from "../../Place";
+  import { resolvedTheme } from "../../theme";
   import { getContext } from "svelte";
   import type { Subsystems } from "src/subsystems/Subsystem";
-
-  export let place: Place;
+  import { AppState } from "../../AppState";
 
   const subsystems: Subsystems = getContext("subsystems");
   const components = subsystems.placeCardComponents();
 
+  const appState = AppState.fromContext();
+
+  let closed = false;
+
+  let place: Place;
   let lastPlace: Place;
 
   let population: number;
 
   $: {
+    place = $appState.selectedFeature;
     if (place !== lastPlace) {
       lastPlace = place;
+      closed = false;
       population = parseInt(place?.tags["osm:population"]);
     }
   }
 </script>
 
-{#if place}
+{#if place && !$appState.placeCardClosed}
   <Card class="scroll">
     <CardBody>
       <span class="d-flex flex-row">
         <h3 class="mb-0">
-          {place.name ??
-            place.tags["name:" + getLangCode()] ??
-            place.tags["name"] ??
-            place.tags["ref"]}
+          {place.name}
         </h3>
         <span class="flex-grow-1" />
         <button
@@ -40,7 +42,7 @@
           class="btn-close"
           aria-label="Close"
           class:btn-close-white={$resolvedTheme === "dark"}
-          on:click={() => (place = undefined)}
+          on:click={() => ($appState.placeCardClosed = true)}
         />
       </span>
     </CardBody>
@@ -55,5 +57,11 @@
     {#each components as component}
       <svelte:component this={component.component} {place} />
     {/each}
+  </Card>
+{:else if $appState.placeCardLoading}
+  <Card class="mt-3">
+    <CardBody>
+      <Spinner />
+    </CardBody>
   </Card>
 {/if}

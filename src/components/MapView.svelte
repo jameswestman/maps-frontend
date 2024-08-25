@@ -21,9 +21,11 @@
   import * as shield_format from "../thirdparty/openstreetmap-americana/src/js/shield_format";
   import * as highway_shield from "../thirdparty/openstreetmap-americana/src/layer/highway_shield";
   import { createInspector, inspectedFeatures } from "../inspector";
-  import type { Subsystems } from "../subsystems/Subsystem";
+  import { Subsystems } from "../subsystems/Subsystem";
   import { generateMapStyle } from "../thirdparty/map-style/src/mapStyle";
   import { Place } from "../Place";
+  import { getLocation } from "../utils";
+  import { AppState } from "../AppState";
 
   export let zoom = 0;
   export let lat = 0;
@@ -36,7 +38,8 @@
   let mapContainer: HTMLElement;
   let geolocate: GeolocateControl;
 
-  const subsystems: Subsystems = getContext("subsystems");
+  const subsystems = Subsystems.fromContext();
+  const appState = AppState.fromContext();
 
   const updateMapStyle = async (map: Map, theme: Theme) => {
     if (!map) return;
@@ -89,6 +92,10 @@
 
     if (place instanceof Promise) {
       selectPlace(null);
+      appState.update((s) => {
+        s.placeCardLoading = true;
+        return s;
+      });
 
       const abort = (placeAbort = new AbortController());
       place = await place;
@@ -101,12 +108,23 @@
       selectedMarker = new Marker().setLngLat(place.location).addTo(map);
       selectedMarker.getElement().addEventListener("click", (ev) => {
         ev.stopPropagation();
+        appState.update((s) => {
+          s.placeCardClosed = false;
+          s.activeSidebarTab = null;
+          return s;
+        });
       });
 
       if (place.featureId) {
         map.setFeatureState(selectedPlace.featureId, { selected: true });
       }
       subsystems.placeSelected(place);
+      appState.update((s) => {
+        s.activeSidebarTab = null;
+        s.placeCardClosed = false;
+        s.placeCardLoading = false;
+        return s;
+      });
     }
   };
 
@@ -247,21 +265,22 @@
             const target = event.originalEvent.target as HTMLElement;
             const marker = target.closest(".maplibregl-user-location-dot");
             if (marker) {
-              selectPlace(
-                new Promise((resolve, reject) => {
-                  navigator.geolocation.getCurrentPosition((position) => {
-                    resolve(
+              try {
+                selectPlace(
+                  getLocation().then(
+                    (location) =>
                       new Place({
                         name: "Current Location",
-                        location: [
-                          position.coords.longitude,
-                          position.coords.latitude,
-                        ],
+                        location: {
+                          lat: location.coords.latitude,
+                          lon: location.coords.longitude,
+                        },
                       })
-                    );
-                  });
-                })
-              );
+                  )
+                );
+              } catch {
+                // ignore
+              }
               return;
             }
           }
@@ -274,7 +293,10 @@
             selectPlace(
               new Place({
                 name: "Dropped Pin",
-                location: event.lngLat.toArray(),
+                location: {
+                  lat: event.lngLat.lat,
+                  lon: event.lngLat.lng,
+                },
               })
             );
           } else {
@@ -288,8 +310,14 @@
                 },
                 location:
                   feature.geometry.type === "Point"
-                    ? (feature.geometry.coordinates as [number, number])
-                    : event.lngLat.toArray(),
+                    ? {
+                        lat: feature.geometry.coordinates[1],
+                        lon: feature.geometry.coordinates[0],
+                      }
+                    : {
+                        lat: event.lngLat.lat,
+                        lon: event.lngLat.lng,
+                      },
                 tags: feature.properties,
               })
             );
@@ -323,5 +351,6 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    z-index: 0;
   }
 </style>

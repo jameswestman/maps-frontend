@@ -31,9 +31,9 @@
   }
 </script>
 
-{#if $wikipedia}
+{#if $wikipedia.status === "success" && $wikipedia.value}
   <CardBody>
-    {$wikipedia.summary}
-    <a href={$wikipedia.url} target="_blank">Wikipedia</a>
+    {$wikipedia.value.summary}
+    <a href={$wikipedia.value.url} target="_blank">Wikipedia</a>
   </CardBody>
 {/if}

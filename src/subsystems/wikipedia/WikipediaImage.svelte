@@ -31,6 +31,6 @@
   }
 </script>
 
-{#if $image}
-  <img src={$image} class="rounded-bottom" alt="" />
+{#if $image.status === "success"}
+  <img src={$image.value} class="rounded-bottom" alt="" />
 {/if}

@@ -1,7 +1,7 @@
 import type { Map } from "maplibre-gl";
 import type { Place } from "../Place";
 import type { Theme } from "src/theme";
-import type { ComponentType } from "svelte";
+import { getContext, type ComponentType } from "svelte";
 
 export class Subsystem {
   public onMount() {}
@@ -14,12 +14,20 @@ export class Subsystem {
 
   public placeDeselected(place: Place) {}
 
-  public placeCardComponents(): PlaceCardComponent[] {
+  public placeCardComponents(): SubsystemComponent[] {
+    return [];
+  }
+
+  public cardComponents(): SubsystemComponent[] {
     return [];
   }
 }
 
 export class Subsystems {
+  public static fromContext(): Subsystems {
+    return getContext<Subsystems>("subsystems");
+  }
+
   constructor(private subsystems: Subsystem[]) {}
 
   public onMount() {
@@ -42,10 +50,19 @@ export class Subsystems {
     this.call((s) => s.placeDeselected(place));
   }
 
-  public placeCardComponents(): PlaceCardComponent[] {
-    const components: PlaceCardComponent[] = [];
+  public placeCardComponents(): SubsystemComponent[] {
+    const components: SubsystemComponent[] = [];
     this.call((s) => {
       components.push(...s.placeCardComponents());
+    });
+    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    return components;
+  }
+
+  public cardComponents(): SubsystemComponent[] {
+    const components: SubsystemComponent[] = [];
+    this.call((s) => {
+      components.push(...s.cardComponents());
     });
     components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     return components;
@@ -60,9 +77,13 @@ export class Subsystems {
       }
     });
   }
+
+  public get<T extends Subsystem>(t: new (...args: any[]) => T): T {
+    return this.subsystems.find((s) => s instanceof t) as T;
+  }
 }
 
-export interface PlaceCardComponent {
+export interface SubsystemComponent {
   component: ComponentType;
   order?: number;
 }
