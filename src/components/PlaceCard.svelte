@@ -11,7 +11,6 @@
 
   const subsystems: Subsystems = getContext("subsystems");
   const components = subsystems.placeCardComponents();
-  console.log(components);
 
   let lastPlace: Place;
 
