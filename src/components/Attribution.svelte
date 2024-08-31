@@ -55,12 +55,17 @@
       description: "Ocean/sea polygons processed from OpenStreetMap",
       link: "https://osmdata.openstreetmap.de/",
     },
+    {
+      name: "OSM Americana",
+      description: "Highway shield icons",
+      link: "https://americanamap.org/",
+    },
   ];
 
   attribution.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
-<Modal {isOpen} {toggle}>
+<Modal {isOpen} {toggle} scrollable>
   <ModalHeader {toggle}>Attribution</ModalHeader>
   <ModalBody>
     {#each attribution as { name, description, link }}
