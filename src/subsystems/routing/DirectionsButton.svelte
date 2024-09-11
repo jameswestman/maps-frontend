@@ -4,7 +4,6 @@
   import { RoutingSubsystem } from "./RoutingSubsystem";
   import { Subsystems } from "../Subsystem";
   import { AppState } from "../../AppState";
-  import RoutingCard from "./RoutingCard.svelte";
   import { reverseGeocode } from "../../utils/geocode";
 
   export let place: Place;
@@ -20,7 +19,7 @@
   const getDirections = () => {
     routing.getDirections(place);
     appState.update((s) => {
-      s.activeSidebarTab = RoutingCard;
+      s.activeSidebarTab = import("./RoutingCard.svelte").then(x => x.default);
       return s;
     });
   };

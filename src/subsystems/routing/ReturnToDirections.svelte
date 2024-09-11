@@ -3,7 +3,6 @@
   import { AppState } from "../../AppState";
   import { Subsystems } from "../Subsystem";
   import { RoutingSubsystem } from "./RoutingSubsystem";
-  import RoutingCard from "./RoutingCard.svelte";
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
   import { derived } from "svelte/store";
@@ -24,7 +23,7 @@
     class="d-flex justify-content-between align-items-center"
     on:click={() => {
       appState.update((s) => {
-        s.activeSidebarTab = RoutingCard;
+        s.activeSidebarTab = import("./RoutingCard.svelte").then((x) => x.default);
         return s;
       });
     }}

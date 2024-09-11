@@ -64,7 +64,15 @@
         {:else}
           <div transition:fly={{ x: 200 }}>
             <div style="position: absolute; width: 100%; max-width: 100%;">
-              <svelte:component this={$appState.activeSidebarTab} />
+              {#await $appState.activeSidebarTab}
+                <div class="text-center">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              {:then tab}
+                <svelte:component this={tab} />
+              {/await}
             </div>
           </div>
         {/if}

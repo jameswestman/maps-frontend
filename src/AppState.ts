@@ -20,7 +20,7 @@ export class AppState {
   public placeCardClosed = false;
   public placeCardLoading = false;
 
-  public activeSidebarTab: ComponentType | null = null;
+  public activeSidebarTab: ComponentType | Promise<ComponentType> | null = null;
 
   public appMenuOpen = false;
 }

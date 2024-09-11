@@ -3,7 +3,6 @@
   import Attribution from "./components/Attribution.svelte";
   import MapView from "./components/MapView.svelte";
   import { Isochrone } from "./subsystems/isochrone/IsochroneSubsystem";
-  import { resolvedTheme } from "./theme";
   import { Subsystems } from "./subsystems/Subsystem";
   import { WikipediaSubsystem } from "./subsystems/wikipedia/WikipediaSubsystem";
   import { RoutingSubsystem } from "./subsystems/routing/RoutingSubsystem";
