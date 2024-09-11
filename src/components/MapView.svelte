@@ -10,7 +10,7 @@
     Marker,
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
-  import { getContext, onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import {
     ThemeVariant,
     resolveThemeVariant,

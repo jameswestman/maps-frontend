@@ -5,8 +5,11 @@
   import { Subsystems } from "../Subsystem";
   import { AppState } from "../../AppState";
   import RoutingCard from "./RoutingCard.svelte";
+  import { reverseGeocode } from "../../utils/geocode";
 
   export let place: Place;
+
+  let routingAvailable = false;
 
   const routing = Subsystems.fromContext().get(RoutingSubsystem);
 
@@ -26,14 +29,24 @@
   $: {
     alreadyAdded = $stops.some((stop) => stop === place);
   }
+  $: {
+    routingAvailable = false;
+    reverseGeocode(place.location).then((result) => {
+      routingAvailable = result.some((r) => r.name === "United States");
+    }).catch((e) => {
+      console.error(e);
+    });
+  }
 </script>
 
-<CardBody>
-  <Button color="primary" on:click={getDirections}>
-    {alreadyAdded
-      ? "Add to Route Again"
-      : $stops.length
-        ? "Add to Route"
-        : "Directions"}
-  </Button>
-</CardBody>
+{#if routingAvailable}
+  <CardBody>
+    <Button color="primary" on:click={getDirections}>
+      {alreadyAdded
+        ? "Add to Route Again"
+        : $stops.length
+          ? "Add to Route"
+          : "Directions"}
+    </Button>
+  </CardBody>
+{/if}
