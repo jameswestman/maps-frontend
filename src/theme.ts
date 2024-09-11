@@ -1,3 +1,4 @@
+import { useColorMode } from "@sveltestrap/sveltestrap";
 import { persisted } from "svelte-local-storage-store";
 import { derived } from "svelte/store";
 
@@ -33,3 +34,7 @@ export const resolveThemeVariant = (theme: Theme) => {
 export const resolvedTheme = derived(theme, (theme) =>
   resolveThemeVariant(theme)
 );
+
+resolvedTheme.subscribe((theme) => {
+  useColorMode(theme);
+});

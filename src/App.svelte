@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, setContext } from "svelte";
-  import type { Place } from "./Place";
   import Attribution from "./components/Attribution.svelte";
   import MapView from "./components/MapView.svelte";
   import { Isochrone } from "./subsystems/isochrone/IsochroneSubsystem";
@@ -12,6 +11,7 @@
   import { AppState } from "./AppState";
   import { writable } from "svelte/store";
   import { PlaceCardSubsystem } from "./subsystems/placeCard/PlaceCardSubsystem";
+  import AppMenu from "./components/AppMenu.svelte";
 
   let subsystems = new Subsystems([
     new PlaceCardSubsystem(),
@@ -31,7 +31,7 @@
   });
 </script>
 
-<div data-bs-theme={$resolvedTheme}>
+<div>
   <MapView
     bind:zoom={$appState.zoom}
     bind:lat={$appState.center.lat}
@@ -40,6 +40,8 @@
   />
 
   <Sidebar />
+
+  <AppMenu />
 
   <Attribution />
 </div>

@@ -1,14 +1,23 @@
 <script lang="ts">
-  import { Subsystems, type SubsystemComponent } from "../subsystems/Subsystem";
+  import { Subsystems } from "../subsystems/Subsystem";
   import ThemeSwitcher from "./ThemeSwitcher.svelte";
   import OpenInCard from "./OpenInCard.svelte";
-  import PlaceCard from "../subsystems/placeCard/PlaceCard.svelte";
   import InspectorCard from "./InspectorCard.svelte";
   import { AppState } from "../AppState";
   import { fly } from "svelte/transition";
+  import { Button } from "@sveltestrap/sveltestrap";
+  import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+  import { faBars } from "@fortawesome/free-solid-svg-icons";
 
   const subsystems = Subsystems.fromContext();
   const appState = AppState.fromContext();
+
+  const openAppMenu = () => {
+    appState.update((a) => {
+      a.appMenuOpen = true;
+      return a;
+    });
+  };
 </script>
 
 <div
@@ -24,7 +33,12 @@
         {#if $appState.activeSidebarTab == null}
           <div transition:fly={{ x: -200 }}>
             <div style="position: absolute; width: 100%; max-width: 100%;">
-              <ThemeSwitcher />
+              <div class="d-flex">
+                <Button class="me-3" on:click={openAppMenu}>
+                  <FontAwesomeIcon icon={faBars} />
+                </Button>
+                <ThemeSwitcher />
+              </div>
 
               <div class="mt-3">
                 <OpenInCard

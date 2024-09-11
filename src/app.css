@@ -16,3 +16,11 @@ html {
 .tnum {
   font-feature-settings: "tnum";
 }
+
+.offcanvas.app-menu-offcanvas {
+  --bs-offcanvas-width: 250px;
+}
+
+.offcanvas.app-menu-offcanvas .offcanvas-body {
+  --bs-offcanvas-padding-x: 0;
+}

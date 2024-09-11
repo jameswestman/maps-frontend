@@ -21,4 +21,6 @@ export class AppState {
   public placeCardLoading = false;
 
   public activeSidebarTab: ComponentType | null = null;
+
+  public appMenuOpen = false;
 }
