@@ -10,7 +10,7 @@ export class DevToolsSubsystem extends Subsystem {
         componentImport: () =>
           import("./DevTools.svelte").then((m) => m.default),
         condition: () => devToolsEnabled,
-        order: 100,
+        order: -100,
       },
     ];
   }

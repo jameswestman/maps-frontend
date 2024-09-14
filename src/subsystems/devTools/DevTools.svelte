@@ -27,7 +27,7 @@
         href="https://openstreetmap.org/#map={zoom + 1}/{lat}/{lng}"
         target="_blank"
       >
-        OpenStreetMap
+        OSM
       </a>
       <a
         href="https://google.com/maps/@{lat},{lng},{zoom + 1}z"
