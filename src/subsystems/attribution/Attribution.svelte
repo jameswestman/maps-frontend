@@ -1,17 +1,17 @@
 <script>
   import { onMount } from "svelte";
   import { Modal, ModalBody, ModalHeader } from "@sveltestrap/sveltestrap";
+  import { isMounted } from "../../utils";
+  import { AppState } from "../../AppState";
 
-  let isOpen = false;
+  const appState = AppState.fromContext();
+
   const toggle = () => {
-    isOpen = !isOpen;
+    appState.update((a) => {
+      a.attributionOpen = !a.attributionOpen;
+      return a;
+    });
   };
-
-  onMount(() => {
-    window.showAttributionDialog = () => {
-      isOpen = true;
-    };
-  });
 
   const attribution = [
     {
@@ -65,7 +65,7 @@
   attribution.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
-<Modal {isOpen} {toggle} scrollable>
+<Modal isOpen={$appState.attributionOpen} {toggle} scrollable>
   <ModalHeader {toggle}>Attribution</ModalHeader>
   <ModalBody>
     {#each attribution as { name, description, link }}

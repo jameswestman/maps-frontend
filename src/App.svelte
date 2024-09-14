@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, setContext } from "svelte";
-  import Attribution from "./components/Attribution.svelte";
   import MapView from "./components/MapView.svelte";
   import { Isochrone } from "./subsystems/isochrone/IsochroneSubsystem";
   import { Subsystems } from "./subsystems/Subsystem";
@@ -10,14 +9,20 @@
   import { AppState } from "./AppState";
   import { writable } from "svelte/store";
   import { PlaceCardSubsystem } from "./subsystems/placeCard/PlaceCardSubsystem";
-  import AppMenu from "./components/AppMenu.svelte";
+  import ComponentInstance from "./components/ComponentInstance.svelte";
+  import { AppMenuSubsystem } from "./subsystems/appMenu/AppMenuSubsystem";
+  import { AttributionSubsystem } from "./subsystems/attribution/AttributionSubsystem";
 
   let subsystems = new Subsystems([
     new PlaceCardSubsystem(),
     new Isochrone(),
     new WikipediaSubsystem(),
     new RoutingSubsystem(),
+    new AppMenuSubsystem(),
+    new AttributionSubsystem(),
   ]);
+
+  const rootComponents = subsystems.appRootComponents();
 
   let appState = writable(new AppState());
 
@@ -28,6 +33,13 @@
     subsystems.onMount();
     return () => subsystems.onDestroy();
   });
+
+  (window as any).showAttributionDialog = () => {
+    appState.update((a) => {
+      a.attributionOpen = true;
+      return a;
+    });
+  };
 </script>
 
 <div>
@@ -40,7 +52,7 @@
 
   <Sidebar />
 
-  <AppMenu />
-
-  <Attribution />
+  {#each rootComponents as component}
+    <ComponentInstance {component} />
+  {/each}
 </div>

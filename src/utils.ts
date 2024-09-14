@@ -1,5 +1,23 @@
 import type { LayerSpecification, Map } from "maplibre-gl";
+import { onMount } from "svelte";
 import { readonly, writable } from "svelte/store";
+
+/**
+ * Returns a store that is true when the component is mounted
+ * and false when it is unmounted. This is useful, for example,
+ * to make sure components that have a transition are rendered
+ * in their hidden state before they are shown.
+ */
+export const isMounted = () => {
+  const store = writable(false);
+  onMount(() => {
+    store.set(true);
+    return () => {
+      store.set(false);
+    };
+  });
+  return readonly(store);
+};
 
 export const addMapLayerUnder = (
   map: Map,

@@ -22,5 +22,6 @@ export class AppState {
 
   public activeSidebarTab: ComponentType | Promise<ComponentType> | null = null;
 
+  public attributionOpen = false;
   public appMenuOpen = false;
 }

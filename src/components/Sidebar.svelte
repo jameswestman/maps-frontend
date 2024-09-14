@@ -8,6 +8,7 @@
   import { Button } from "@sveltestrap/sveltestrap";
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import { faBars } from "@fortawesome/free-solid-svg-icons";
+  import ComponentInstance from "./ComponentInstance.svelte";
 
   const subsystems = Subsystems.fromContext();
   const appState = AppState.fromContext();
@@ -54,9 +55,7 @@
 
               {#each subsystems.cardComponents() as component}
                 <div class="mt-3">
-                  {#if component}
-                    <svelte:component this={component.component} />
-                  {/if}
+                  <ComponentInstance {component} />
                 </div>
               {/each}
             </div>

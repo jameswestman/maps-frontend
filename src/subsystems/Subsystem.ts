@@ -2,6 +2,7 @@ import type { Map } from "maplibre-gl";
 import type { Place } from "../Place";
 import type { Theme } from "src/theme";
 import { getContext, type ComponentType } from "svelte";
+import type { Readable } from "svelte/store";
 
 export class Subsystem {
   public onMount() {}
@@ -13,6 +14,10 @@ export class Subsystem {
   public placeSelected(place: Place) {}
 
   public placeDeselected(place: Place) {}
+
+  public appRootComponents(): SubsystemComponent[] {
+    return [];
+  }
 
   public placeCardComponents(): SubsystemComponent[] {
     return [];
@@ -50,6 +55,15 @@ export class Subsystems {
     this.call((s) => s.placeDeselected(place));
   }
 
+  public appRootComponents(): SubsystemComponent[] {
+    const components: SubsystemComponent[] = [];
+    this.call((s) => {
+      components.push(...s.appRootComponents());
+    });
+    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    return components;
+  }
+
   public placeCardComponents(): SubsystemComponent[] {
     const components: SubsystemComponent[] = [];
     this.call((s) => {
@@ -83,7 +97,25 @@ export class Subsystems {
   }
 }
 
-export interface SubsystemComponent {
+/**
+ * A subsystem component that is immediately available.
+ */
+export interface ImmediateSubsystemComponent extends SubsystemComponentShared {
   component: ComponentType;
+}
+
+/**
+ * A subsystem component that loads asynchronously.
+ */
+export interface DeferredSubsystemComponent extends SubsystemComponentShared {
+  componentImport: () => Promise<ComponentType>;
+}
+
+export interface SubsystemComponentShared {
+  condition?: Readable<boolean> | (() => Readable<boolean>);
   order?: number;
 }
+
+export type SubsystemComponent =
+  | ImmediateSubsystemComponent
+  | DeferredSubsystemComponent;

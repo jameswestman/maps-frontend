@@ -4,9 +4,10 @@
     ListGroupItem,
     Offcanvas,
   } from "@sveltestrap/sveltestrap";
-  import { AppState } from "../AppState";
+  import { AppState } from "../../AppState";
   import Feedback from "./Feedback.svelte";
-  import { resolvedTheme, theme, ThemeVariant } from "../theme";
+  import { resolvedTheme, theme, ThemeVariant } from "../../theme";
+  import { isMounted } from "../../utils";
 
   const commitHash = __COMMIT_HASH__.substring(0, 8);
 
@@ -32,16 +33,21 @@
       variant: target.checked ? ThemeVariant.DARK : ThemeVariant.LIGHT,
     });
   };
+
+  const mounted = isMounted();
 </script>
 
 <Offcanvas
-  isOpen={$appState.appMenuOpen}
+  isOpen={$mounted && $appState.appMenuOpen}
   {toggle}
   header="Menu"
   backdrop
   class="app-menu-offcanvas"
 >
-  <div class="d-flex flex-column justify-content-between" style="min-height: 100%;">
+  <div
+    class="d-flex flex-column justify-content-between"
+    style="min-height: 100%;"
+  >
     <div>
       <ListGroup flush>
         <ListGroupItem>

@@ -6,6 +6,7 @@
   import { getContext } from "svelte";
   import type { Subsystems } from "src/subsystems/Subsystem";
   import { AppState } from "../../AppState";
+  import ComponentInstance from "../../components/ComponentInstance.svelte";
 
   const subsystems: Subsystems = getContext("subsystems");
   const components = subsystems.placeCardComponents();
@@ -55,7 +56,7 @@
     {/if}
 
     {#each components as component}
-      <svelte:component this={component.component} {place} />
+      <ComponentInstance {component} args={{ place }} />
     {/each}
   </Card>
 {:else if $appState.placeCardLoading}
