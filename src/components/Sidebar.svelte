@@ -8,6 +8,7 @@
   import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import { faBars } from "@fortawesome/free-solid-svg-icons";
   import ComponentInstance from "./ComponentInstance.svelte";
+  import { resolvedTheme } from "../theme";
 
   const subsystems = Subsystems.fromContext();
   const appState = AppState.fromContext();
@@ -34,7 +35,11 @@
           <div transition:fly={{ x: -200 }}>
             <div style="position: absolute; width: 100%; max-width: 100%;">
               <div class="d-flex">
-                <Button class="me-3" on:click={openAppMenu}>
+                <Button
+                  color={$resolvedTheme === "light" ? "light" : "secondary"}
+                  class="me-3"
+                  on:click={openAppMenu}
+                >
                   <FontAwesomeIcon icon={faBars} />
                 </Button>
                 <ThemeSwitcher />

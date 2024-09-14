@@ -5,12 +5,14 @@
 
 <ButtonGroup class="w-100">
   <Button
+    color={$resolvedTheme === "light" ? "light": "secondary"}
     active={$resolvedTheme === "light"}
     on:click={() => theme.set({ ...$theme, variant: ThemeVariant.LIGHT })}
   >
     Light
   </Button>
   <Button
+    color={$resolvedTheme === "light" ? "light": "secondary"}
     active={$resolvedTheme === "dark"}
     on:click={() => theme.set({ ...$theme, variant: ThemeVariant.DARK })}
   >
