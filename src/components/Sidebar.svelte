@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Subsystems } from "../subsystems/Subsystem";
   import ThemeSwitcher from "./ThemeSwitcher.svelte";
-  import OpenInCard from "./OpenInCard.svelte";
   import InspectorCard from "./InspectorCard.svelte";
   import { AppState } from "../AppState";
   import { fly } from "svelte/transition";
@@ -39,14 +38,6 @@
                   <FontAwesomeIcon icon={faBars} />
                 </Button>
                 <ThemeSwitcher />
-              </div>
-
-              <div class="mt-3">
-                <OpenInCard
-                  zoom={$appState.zoom}
-                  lat={$appState.center.lat}
-                  lng={$appState.center.lng}
-                />
               </div>
 
               <div class="mt-3">

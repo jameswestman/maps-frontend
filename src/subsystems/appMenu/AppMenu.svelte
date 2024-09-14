@@ -7,7 +7,8 @@
   import { AppState } from "../../AppState";
   import Feedback from "./Feedback.svelte";
   import { resolvedTheme, theme, ThemeVariant } from "../../theme";
-  import { isMounted } from "../../utils";
+  import { isMounted, uniqueId } from "../../utils";
+  import { devToolsEnabled } from "../devTools/DevToolsSubsystem";
 
   const commitHash = __COMMIT_HASH__.substring(0, 8);
 
@@ -34,7 +35,15 @@
     });
   };
 
+  const toggleDevTools = (e: Event) => {
+    const target: HTMLInputElement = e.target as HTMLInputElement;
+    devToolsEnabled.set(target.checked);
+  };
+
   const mounted = isMounted();
+
+  const darkModeInputID = uniqueId();
+  const devToolsInputID = uniqueId();
 </script>
 
 <Offcanvas
@@ -58,12 +67,27 @@
             <input
               class="form-check-input"
               type="checkbox"
-              id="dark-mode-switch"
+              id={darkModeInputID}
               checked={$resolvedTheme === "dark"}
               on:change={toggleDarkMode}
             />
-            <label class="form-check-label" for="dark-mode-switch">
+            <label class="form-check-label" for={darkModeInputID}>
               Dark Mode
+            </label>
+          </div>
+        </ListGroupItem>
+
+        <ListGroupItem>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id={devToolsInputID}
+              bind:checked={$devToolsEnabled}
+              on:change={toggleDevTools}
+            />
+            <label class="form-check-label" for={devToolsInputID}>
+              Dev Tools
             </label>
           </div>
         </ListGroupItem>

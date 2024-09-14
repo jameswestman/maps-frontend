@@ -19,6 +19,11 @@ export const isMounted = () => {
   return readonly(store);
 };
 
+let nextUniqueId = 0;
+export const uniqueId = () => {
+  return 'E' + nextUniqueId++;
+}
+
 export const addMapLayerUnder = (
   map: Map,
   category: string,

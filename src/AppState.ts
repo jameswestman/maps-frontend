@@ -1,7 +1,6 @@
 import { getContext, type ComponentType } from "svelte";
-import { writable, type Writable } from "svelte/store";
+import { type Writable } from "svelte/store";
 import type { Place } from "./Place";
-import type { SubsystemComponent } from "./subsystems/Subsystem";
 
 export class AppState {
   public static fromContext(): Writable<AppState> {

@@ -12,6 +12,7 @@
   import ComponentInstance from "./components/ComponentInstance.svelte";
   import { AppMenuSubsystem } from "./subsystems/appMenu/AppMenuSubsystem";
   import { AttributionSubsystem } from "./subsystems/attribution/AttributionSubsystem";
+  import { DevToolsSubsystem } from "./subsystems/devTools/DevToolsSubsystem";
 
   let subsystems = new Subsystems([
     new PlaceCardSubsystem(),
@@ -20,6 +21,7 @@
     new RoutingSubsystem(),
     new AppMenuSubsystem(),
     new AttributionSubsystem(),
+    new DevToolsSubsystem(),
   ]);
 
   const rootComponents = subsystems.appRootComponents();

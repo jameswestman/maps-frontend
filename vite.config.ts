@@ -10,4 +10,9 @@ export default defineConfig({
     __COMMIT_HASH__: JSON.stringify(commitHash),
   },
   plugins: [svelte()],
+  build: {
+    /* index.js is going to be big, not much we can do about it, but do
+       still complain if it gets much bigger */
+    chunkSizeWarningLimit: 1500,
+  }
 });
