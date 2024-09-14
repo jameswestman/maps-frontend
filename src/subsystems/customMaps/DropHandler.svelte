@@ -17,7 +17,9 @@
 
   const onDragOver = (event: DragEvent) => {
     event.preventDefault();
-    dropActive.set(true);
+    if (event.dataTransfer.types.includes("Files")) {
+      dropActive.set(true);
+    }
   };
 
   const onDragLeave = (event: DragEvent) => {
