@@ -26,6 +26,8 @@ export class Subsystem {
   public cardComponents(): SubsystemComponent[] {
     return [];
   }
+
+  public handleStyleImageMissing(imageId: string, map: Map) {}
 }
 
 export class Subsystems {
@@ -80,6 +82,10 @@ export class Subsystems {
     });
     components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     return components;
+  }
+
+  public handleStyleImageMissing(imageId: string, map: Map) {
+    this.call((s) => s.handleStyleImageMissing(imageId, map));
   }
 
   public call(f: (subsystem: Subsystem) => void) {

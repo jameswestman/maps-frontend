@@ -13,6 +13,7 @@
   import { AppMenuSubsystem } from "./subsystems/appMenu/AppMenuSubsystem";
   import { AttributionSubsystem } from "./subsystems/attribution/AttributionSubsystem";
   import { DevToolsSubsystem } from "./subsystems/devTools/DevToolsSubsystem";
+  import { CustomMapsSubsystem } from "./subsystems/customMaps/CustomMapsSubsystem";
 
   let subsystems = new Subsystems([
     new PlaceCardSubsystem(),
@@ -22,6 +23,7 @@
     new AppMenuSubsystem(),
     new AttributionSubsystem(),
     new DevToolsSubsystem(),
+    new CustomMapsSubsystem(),
   ]);
 
   const rootComponents = subsystems.appRootComponents();

@@ -7,6 +7,7 @@
   import type { Subsystems } from "src/subsystems/Subsystem";
   import { AppState } from "../../AppState";
   import ComponentInstance from "../../components/ComponentInstance.svelte";
+  import { faFile } from "@fortawesome/free-solid-svg-icons";
 
   const subsystems: Subsystems = getContext("subsystems");
   const components = subsystems.placeCardComponents();
@@ -20,14 +21,26 @@
 
   let population: number;
 
+  $: population = parseInt(place?.tags["osm:population"]);
+
   $: {
     place = $appState.selectedFeature;
     if (place !== lastPlace) {
       lastPlace = place;
       closed = false;
-      population = parseInt(place?.tags["osm:population"]);
     }
   }
+
+  const geometryName = (type: GeoJSON.GeoJsonGeometryTypes) =>
+    ({
+      Point: "Marker",
+      LineString: "Path",
+      Polygon: "Area",
+      MultiPoint: "Points",
+      MultiLineString: "Paths",
+      MultiPolygon: "Areas",
+      GeometryCollection: "Feature",
+    })[type] ?? "Feature";
 </script>
 
 {#if place && !$appState.placeCardClosed}
@@ -35,7 +48,11 @@
     <CardBody>
       <span class="d-flex flex-row">
         <h3 class="mb-0">
-          {place.name}
+          {#if place.name}
+            {place.name}
+          {:else if place.origin.type === "custom-map"}
+            <span class="opacity-50">Untitled {geometryName(place.geometryType)}</span>
+          {/if}
         </h3>
         <span class="flex-grow-1" />
         <button
@@ -46,12 +63,24 @@
           on:click={() => ($appState.placeCardClosed = true)}
         />
       </span>
+      {#if place.origin?.name}
+        <div class="opacity-50 mt-1">
+          <FontAwesomeIcon icon={faFile} class="me-1" />
+          {place.origin.name}
+        </div>
+      {/if}
     </CardBody>
 
     {#if population}
       <CardBody>
         <FontAwesomeIcon icon={"users"} class="me-1" />
         Population {population.toLocaleString()}
+      </CardBody>
+    {/if}
+
+    {#if place.tags?.description}
+      <CardBody>
+        {place.tags.description}
       </CardBody>
     {/if}
 

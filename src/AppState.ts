@@ -1,6 +1,7 @@
 import { getContext, type ComponentType } from "svelte";
 import { type Writable } from "svelte/store";
 import type { Place } from "./Place";
+import type { Map } from "maplibre-gl";
 
 export class AppState {
   public static fromContext(): Writable<AppState> {

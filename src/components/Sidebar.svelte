@@ -22,7 +22,7 @@
 </script>
 
 <div
-  class="container position-absolute top-0 left-0 right-0 bottom-0 overflow-hidden"
+  class="container position-absolute top-0 left-0 right-0 bottom-0 overflow-hidden z-0"
   style="pointer-events: none"
 >
   <div class="row h-100" style="pointer-events: none">

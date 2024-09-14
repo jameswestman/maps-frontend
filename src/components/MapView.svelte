@@ -73,7 +73,10 @@
 
   let placeAbort: AbortController;
 
-  const selectPlace = async (place: Place | Promise<Place>) => {
+  const selectPlace = async (
+    place: Place | Promise<Place>,
+    showMarker: boolean = true
+  ) => {
     if (placeAbort) {
       placeAbort.abort();
       placeAbort = null;
@@ -105,15 +108,17 @@
     selectedPlace = place;
 
     if (place) {
-      selectedMarker = new Marker().setLngLat(place.location).addTo(map);
-      selectedMarker.getElement().addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        appState.update((s) => {
-          s.placeCardClosed = false;
-          s.activeSidebarTab = null;
-          return s;
+      if (showMarker) {
+        selectedMarker = new Marker().setLngLat(place.location).addTo(map);
+        selectedMarker.getElement().addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          appState.update((s) => {
+            s.placeCardClosed = false;
+            s.activeSidebarTab = null;
+            return s;
+          });
         });
-      });
+      }
 
       if (place.featureId) {
         map.setFeatureState(selectedPlace.featureId, { selected: true });
@@ -176,6 +181,8 @@
         );
 
         if (!map.hasImage(event.id)) map.addImage(event.id, i, { sdf: true });
+      } else {
+        subsystems.handleStyleImageMissing(event.id, map);
       }
     });
 
@@ -203,7 +210,8 @@
 
       for (const layer of style.layers) {
         if (!layer.metadata) continue;
-        const cursor = layer.metadata["libshumate:cursor"];
+        const cursor =
+          layer.metadata["cursor"] ?? layer.metadata["libshumate:cursor"];
 
         if (cursor) {
           const mouseenter = (event: MapMouseEvent) => {
@@ -275,8 +283,10 @@
                           lat: location.coords.latitude,
                           lon: location.coords.longitude,
                         },
+                        geometryType: "Point",
                       })
-                  )
+                  ),
+                  false
                 );
               } catch {
                 // ignore
@@ -287,7 +297,11 @@
 
           const features: MapGeoJSONFeature[] = map
             .queryRenderedFeatures(event.point)
-            .filter((f) => f.layer.metadata?.["libshumate:cursor"]);
+            .filter(
+              (f) =>
+                f.layer.metadata?.["cursor"] ??
+                f.layer.metadata?.["libshumate:cursor"]
+            );
 
           if (features.length === 0) {
             selectPlace(
@@ -297,10 +311,13 @@
                   lat: event.lngLat.lat,
                   lon: event.lngLat.lng,
                 },
+                geometryType: "Point",
               })
             );
           } else {
             const feature = features[0];
+            const origin = feature.layer.metadata?.["place-origin"];
+
             selectPlace(
               new Place({
                 featureId: {
@@ -319,7 +336,9 @@
                         lon: event.lngLat.lng,
                       },
                 tags: feature.properties,
-              })
+                origin,
+                geometryType: feature.geometry.type,
+              }),
             );
           }
         };

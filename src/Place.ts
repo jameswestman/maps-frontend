@@ -6,33 +6,49 @@ export interface Location {
   lon: number;
 }
 
+export interface PlaceOrigin {
+  type: "osm" | "custom-map";
+  name?: string;
+}
+
 export class Place {
   public readonly originalName?: string;
   public readonly location: Location;
   public readonly tags: { [key: string]: string };
   public readonly featureId?: FeatureIdentifier;
+  public readonly geometryType?: GeoJSON.GeoJsonGeometryTypes;
+  public readonly origin?: PlaceOrigin;
 
   constructor({
     name,
     location,
     tags,
     featureId,
+    origin,
+    geometryType,
   }: {
     name?: string;
     location: Location;
     tags?: { [key: string]: string };
     featureId?: FeatureIdentifier;
+    origin?: PlaceOrigin;
+    geometryType?: GeoJSON.GeoJsonGeometryTypes;
   }) {
     this.originalName = name;
     this.location = location;
     this.tags = tags ?? {};
     this.featureId = featureId;
+    this.origin = origin;
+    this.geometryType = geometryType;
   }
 
   public get name() {
-    return this.originalName ??
+    return (
+      this.originalName ??
+      (this.origin?.type === "custom-map" ? this.tags["title"] : undefined) ??
       this.tags["name:" + getLangCode()] ??
       this.tags["name"] ??
-      this.tags["ref"];
+      this.tags["ref"]
+    );
   }
 }
