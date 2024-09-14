@@ -49,7 +49,7 @@
                 <InspectorCard />
               </div>
 
-              {#each subsystems.cardComponents() as component}
+              {#each subsystems.components("sidebar") as component}
                 <div class="mt-3">
                   <ComponentInstance {component} />
                 </div>

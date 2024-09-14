@@ -10,7 +10,7 @@
   import { faFile } from "@fortawesome/free-solid-svg-icons";
 
   const subsystems: Subsystems = getContext("subsystems");
-  const components = subsystems.placeCardComponents();
+  const components = subsystems.components('placeCard');
 
   const appState = AppState.fromContext();
 

@@ -1,5 +1,5 @@
 import type { Map } from "maplibre-gl";
-import { Subsystem, type SubsystemComponent } from "../Subsystem";
+import { Subsystem, type SubsystemComponents } from "../Subsystem";
 import { writable } from "svelte/store";
 import DropHandler from "./DropHandler.svelte";
 import type { FileLoader } from "./FileLoader";
@@ -44,17 +44,19 @@ export class CustomMapsSubsystem extends Subsystem {
     });
   }
 
-  public appRootComponents(): SubsystemComponent[] {
-    return [
-      {
-        component: DropHandler,
-      },
-      {
-        componentImport: () =>
-          import("./DropZone.svelte").then((m) => m.default),
-        condition: dropActive,
-        order: 100,
-      },
-    ];
+  public components(): SubsystemComponents {
+    return {
+      appRoot: [
+        {
+          component: DropHandler,
+        },
+        {
+          componentImport: () =>
+            import("./DropZone.svelte").then((m) => m.default),
+          condition: dropActive,
+          order: 100,
+        },
+      ],
+    };
   }
 }

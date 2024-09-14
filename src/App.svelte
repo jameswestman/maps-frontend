@@ -26,7 +26,7 @@
     new CustomMapsSubsystem(),
   ]);
 
-  const rootComponents = subsystems.appRootComponents();
+  const rootComponents = subsystems.components('appRoot');
 
   let appState = writable(new AppState());
 

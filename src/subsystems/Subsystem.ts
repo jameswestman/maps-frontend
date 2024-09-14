@@ -15,27 +15,34 @@ export class Subsystem {
 
   public placeDeselected(place: Place) {}
 
-  public appRootComponents(): SubsystemComponent[] {
-    return [];
-  }
-
-  public placeCardComponents(): SubsystemComponent[] {
-    return [];
-  }
-
-  public cardComponents(): SubsystemComponent[] {
-    return [];
+  public components(): SubsystemComponents {
+    return {};
   }
 
   public handleStyleImageMissing(imageId: string, map: Map) {}
 }
 
 export class Subsystems {
+  private _components: SubsystemComponents = {};
+
   public static fromContext(): Subsystems {
     return getContext<Subsystems>("subsystems");
   }
 
-  constructor(private subsystems: Subsystem[]) {}
+  constructor(private subsystems: Subsystem[]) {
+    for (const s of subsystems) {
+      const components = s.components();
+      for (const key in components) {
+        if (!this._components[key]) {
+          this._components[key] = [];
+        }
+        this._components[key].push(...components[key]);
+      }
+    }
+    for (const key in this._components) {
+      this._components[key].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+  }
 
   public onMount() {
     this.call((s) => s.onMount());
@@ -57,31 +64,8 @@ export class Subsystems {
     this.call((s) => s.placeDeselected(place));
   }
 
-  public appRootComponents(): SubsystemComponent[] {
-    const components: SubsystemComponent[] = [];
-    this.call((s) => {
-      components.push(...s.appRootComponents());
-    });
-    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    return components;
-  }
-
-  public placeCardComponents(): SubsystemComponent[] {
-    const components: SubsystemComponent[] = [];
-    this.call((s) => {
-      components.push(...s.placeCardComponents());
-    });
-    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    return components;
-  }
-
-  public cardComponents(): SubsystemComponent[] {
-    const components: SubsystemComponent[] = [];
-    this.call((s) => {
-      components.push(...s.cardComponents());
-    });
-    components.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    return components;
+  public components(key: string): SubsystemComponent[] {
+    return this._components[key] ?? [];
   }
 
   public handleStyleImageMissing(imageId: string, map: Map) {
@@ -125,3 +109,5 @@ export interface SubsystemComponentShared {
 export type SubsystemComponent =
   | ImmediateSubsystemComponent
   | DeferredSubsystemComponent;
+
+export type SubsystemComponents = { [key: string]: SubsystemComponent[] };

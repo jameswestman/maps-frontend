@@ -1,5 +1,5 @@
 import { Place } from "../../Place";
-import { Subsystem, type SubsystemComponent } from "../Subsystem";
+import { Subsystem, type SubsystemComponents } from "../Subsystem";
 import DirectionsButton from "./DirectionsButton.svelte";
 import { type Costing, type RouteResponse, type RouteTrip } from "./api-types";
 import { getLocation, taskQueue } from "../../utils";
@@ -52,47 +52,56 @@ export class RoutingSubsystem extends Subsystem {
     const casingColor =
       theme.variant === ThemeVariant.DARK ? "#007fff" : "#ccccff";
 
-    map.addLayer({
-      id: "route-overlay-casing",
-      type: "line",
-      source: "route",
-      paint: {
-        "line-color": casingColor,
-        "line-width": 9,
+    map.addLayer(
+      {
+        id: "route-overlay-casing",
+        type: "line",
+        source: "route",
+        paint: {
+          "line-color": casingColor,
+          "line-width": 9,
+        },
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
       },
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
+      "ferry-line"
+    );
+    map.addLayer(
+      {
+        id: "route-overlay",
+        type: "line",
+        source: "route",
+        paint: {
+          "line-color": "blue",
+          "line-width": 6,
+        },
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
       },
-    }, "ferry-line");
-    map.addLayer({
-      id: "route-overlay",
-      type: "line",
-      source: "route",
-      paint: {
-        "line-color": "blue",
-        "line-width": 6,
+      "ferry-line"
+    );
+    map.addLayer(
+      {
+        id: "route-overlay-arrows",
+        type: "symbol",
+        source: "route",
+        paint: {
+          "icon-color": casingColor,
+        },
+        layout: {
+          "icon-image": "arrow1-right-symbolic",
+          "symbol-placement": "line",
+          "symbol-spacing": 50,
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+        },
       },
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-    }, "ferry-line");
-    map.addLayer({
-      id: "route-overlay-arrows",
-      type: "symbol",
-      source: "route",
-      paint: {
-        "icon-color": casingColor,
-      },
-      layout: {
-        "icon-image": "arrow1-right-symbolic",
-        "symbol-placement": "line",
-        "symbol-spacing": 50,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-      },
-    }, "ferry-line");
+      "ferry-line"
+    );
   }
 
   private setMapRouteData(trip: RouteTrip): void {
@@ -122,22 +131,21 @@ export class RoutingSubsystem extends Subsystem {
     });
   }
 
-  public placeCardComponents(): SubsystemComponent[] {
-    return [
-      {
-        component: DirectionsButton,
-        order: 0,
-      },
-    ];
-  }
-
-  public cardComponents(): SubsystemComponent[] {
-    return [
-      {
-        component: ReturnToDirections,
-        order: -1,
-      },
-    ];
+  public components(): SubsystemComponents {
+    return {
+      placeCard: [
+        {
+          component: DirectionsButton,
+          order: 0,
+        },
+      ],
+      sidebar: [
+        {
+          component: ReturnToDirections,
+          order: -1,
+        },
+      ],
+    };
   }
 
   public async getDirections(place: Place) {
