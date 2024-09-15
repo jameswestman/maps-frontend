@@ -57,6 +57,12 @@ export class CustomMapsSubsystem extends Subsystem {
           order: 100,
         },
       ],
+      menuSections: [
+        {
+          componentImport: () =>
+            import("./MenuItems.svelte").then((m) => m.default),
+        },
+      ],
     };
   }
 }

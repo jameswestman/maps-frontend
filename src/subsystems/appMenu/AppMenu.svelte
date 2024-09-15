@@ -9,10 +9,15 @@
   import { resolvedTheme, theme, ThemeVariant } from "../../theme";
   import { isMounted, uniqueId } from "../../utils";
   import { devToolsEnabled } from "../devTools/DevToolsSubsystem";
+  import { Subsystems } from "../Subsystem";
+  import ComponentInstance from "../../components/ComponentInstance.svelte";
 
   const commitHash = __COMMIT_HASH__.substring(0, 8);
 
+  const subsystems = Subsystems.fromContext();
   const appState = AppState.fromContext();
+
+  const menuSections = subsystems.components("menuSections");
 
   const toggle = () => {
     appState.update((a) => {
@@ -92,6 +97,10 @@
           </div>
         </ListGroupItem>
       </ListGroup>
+
+      {#each menuSections as component}
+        <ComponentInstance {component} />
+      {/each}
 
       <ListGroup flush>
         <ListGroupItem>
