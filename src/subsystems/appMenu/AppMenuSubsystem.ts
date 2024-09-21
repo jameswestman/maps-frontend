@@ -9,11 +9,7 @@ export class AppMenuSubsystem extends Subsystem {
         {
           componentImport: () =>
             import("./AppMenu.svelte").then((module) => module.default),
-          condition: () =>
-            derived(
-              AppState.fromContext(),
-              ($appState) => $appState.appMenuOpen
-            ),
+          loadCondition: () => AppState.fromContext().appMenuOpen,
           order: 0,
         },
       ],

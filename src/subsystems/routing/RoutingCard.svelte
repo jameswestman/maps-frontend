@@ -99,10 +99,7 @@
   };
 
   const closeSidebar = () => {
-    appState.update((s) => {
-      s.activeSidebarTab = null;
-      return s;
-    });
+    appState.activeSidebarTab.set(null);
   };
 </script>
 

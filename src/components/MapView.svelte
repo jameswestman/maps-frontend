@@ -24,22 +24,19 @@
   import { Subsystems } from "../subsystems/Subsystem";
   import { generateMapStyle } from "../thirdparty/map-style/src/mapStyle";
   import { Place } from "../Place";
-  import { getLocation } from "../utils";
   import { AppState } from "../AppState";
+  import { get } from "svelte/store";
+  import type { MapTool } from "src/MapTool";
 
-  export let zoom = 0;
-  export let lat = 0;
-  export let lng = 0;
-  export let selectedPlace: Place;
+  const subsystems = Subsystems.fromContext();
+  const appState = AppState.fromContext();
 
-  let selectedMarker: Marker;
+  let zoom = appState.zoom;
+  let center = appState.center;
 
   let map: Map;
   let mapContainer: HTMLElement;
   let geolocate: GeolocateControl;
-
-  const subsystems = Subsystems.fromContext();
-  const appState = AppState.fromContext();
 
   const updateMapStyle = async (map: Map, theme: Theme) => {
     if (!map) return;
@@ -71,67 +68,81 @@
     onDestroy(unsubscribe);
   }
 
-  let placeAbort: AbortController;
+  let selectedMarker: Marker;
+  let lastSelectedPlace: Place;
 
-  const selectPlace = async (
-    place: Place | Promise<Place>,
-    showMarker: boolean = true
-  ) => {
-    if (placeAbort) {
-      placeAbort.abort();
-      placeAbort = null;
+  let oldMapTool: MapTool = null;
+  appState.mapTool.subscribe((newMapTool) => {
+    if (oldMapTool) {
+      oldMapTool.stop?.();
     }
+    if (newMapTool) {
+      newMapTool.start?.(map);
+    }
+    oldMapTool = newMapTool;
+  });
 
+  const selectPlace = (place: Place) => {
     if (selectedMarker) {
       selectedMarker.remove();
     }
 
-    if (selectedPlace) {
-      subsystems.placeDeselected(selectedPlace);
-      if (selectedPlace.featureId) {
-        map.setFeatureState(selectedPlace.featureId, { selected: false });
+    if (lastSelectedPlace) {
+      subsystems.placeDeselected(lastSelectedPlace);
+      if (lastSelectedPlace.featureId) {
+        map.setFeatureState(lastSelectedPlace.featureId, {
+          selected: false,
+        });
       }
     }
 
-    if (place instanceof Promise) {
-      selectPlace(null);
-      appState.update((s) => {
-        s.placeCardLoading = true;
-        return s;
-      });
-
-      const abort = (placeAbort = new AbortController());
-      place = await place;
-      if (abort.signal.aborted) return;
-    }
-
-    selectedPlace = place;
-
     if (place) {
-      if (showMarker) {
+      if (place.showMarker) {
         selectedMarker = new Marker().setLngLat(place.location).addTo(map);
         selectedMarker.getElement().addEventListener("click", (ev) => {
           ev.stopPropagation();
-          appState.update((s) => {
-            s.placeCardClosed = false;
-            s.activeSidebarTab = null;
-            return s;
-          });
+          appState.placeCardClosed.set(false);
+          appState.activeSidebarTab.set(null);
         });
       }
 
-      if (place.featureId) {
-        map.setFeatureState(selectedPlace.featureId, { selected: true });
+      if (place.featureId?.id) {
+        map.setFeatureState(place.featureId, { selected: true });
       }
       subsystems.placeSelected(place);
-      appState.update((s) => {
-        s.activeSidebarTab = null;
-        s.placeCardClosed = false;
-        s.placeCardLoading = false;
-        return s;
-      });
+      appState.activeSidebarTab.set(null);
+      appState.placeCardClosed.set(false);
     }
+
+    lastSelectedPlace = place;
   };
+
+  const defaultMapTool: MapTool = {
+    getCursor(features) {
+      if (features.length === 0) return "grab";
+      const feature = features[0];
+      const cursor =
+        feature.layer.metadata?.["cursor"] ??
+        feature.layer.metadata?.["libshumate:cursor"];
+      return cursor ?? "grab";
+    },
+
+    onClick(event, place) {
+      if (place === null) {
+        place = new Place({
+          name: "Dropped Pin",
+          location: {
+            lat: event.lngLat.lat,
+            lon: event.lngLat.lng,
+          },
+          geometryType: "Point",
+        });
+      }
+      appState.selectedFeature.set(place);
+    },
+  };
+
+  const mapTool = () => get(appState.mapTool) ?? defaultMapTool;
 
   onMount(() => {
     map = new Map({
@@ -159,8 +170,19 @@
     });
     map.addControl(geolocate);
 
-    zoom = map.getZoom();
-    [lng, lat] = map.getCenter().toArray();
+    let geolocation: GeolocationCoordinates;
+    geolocate.on("geolocate", (event) => {
+      console.log(event);
+      geolocation = event.coords;
+    });
+
+    zoom.set(map.getZoom());
+    const [lon, lat] = map.getCenter().toArray();
+    center.set({ lon, lat });
+
+    const selectedFeatureUnsub = appState.selectedFeature.subscribe((place) => {
+      selectPlace(place);
+    });
 
     updateMapStyle(map, $theme);
 
@@ -192,13 +214,87 @@
       .renderOnMaplibreGL(map);
 
     map.on("zoomend", () => {
-      zoom = map.getZoom();
+      zoom.set(map.getZoom());
     });
     map.on("moveend", () => {
-      [lng, lat] = map.getCenter().toArray();
+      const [lon, lat] = map.getCenter().toArray();
+      center.set({ lon, lat });
+    });
+
+    map.on("mousemove", (event) => {
+      const canvas = mapContainer.querySelector(
+        ".maplibregl-canvas"
+      ) as HTMLElement;
+
+      const getCursor = mapTool().getCursor;
+      /* If there is no cursor function, use the default "grab". If there is
+         a cursor function and it returns falsy, don't change the cursor. */
+      if (getCursor) {
+        const features = map.queryRenderedFeatures(event.point);
+        const cursor = getCursor(features);
+        if (cursor) {
+          canvas.style.cursor = cursor;
+        }
+      } else {
+        canvas.style.cursor = "grab";
+      }
     });
 
     const unregisterListeners: (() => void)[] = [];
+
+    const placeFromEvent = (event: MapMouseEvent) => {
+      if (event.originalEvent.target instanceof HTMLElement) {
+        const target = event.originalEvent.target as HTMLElement;
+        const marker = target.closest(".maplibregl-user-location-dot");
+        if (marker) {
+          return new Place({
+            name: "Current Location",
+            location: {
+              lat: geolocation.latitude,
+              lon: geolocation.longitude,
+            },
+            geometryType: "Point",
+            showMarker: false,
+          });
+        }
+      }
+
+      const features: MapGeoJSONFeature[] = map
+        .queryRenderedFeatures(event.point)
+        .filter(
+          (f) =>
+            f.layer.metadata?.["cursor"] ??
+            f.layer.metadata?.["libshumate:cursor"]
+        );
+
+      if (features.length === 0) {
+        return null;
+      } else {
+        const feature = features[0];
+        const origin = feature.layer.metadata?.["place-origin"];
+
+        return new Place({
+          featureId: {
+            id: feature.id,
+            source: feature.source,
+            sourceLayer: feature.sourceLayer,
+          },
+          location:
+            feature.geometry.type === "Point"
+              ? {
+                  lat: feature.geometry.coordinates[1],
+                  lon: feature.geometry.coordinates[0],
+                }
+              : {
+                  lat: event.lngLat.lat,
+                  lon: event.lngLat.lng,
+                },
+          tags: feature.properties,
+          origin,
+          geometryType: feature.geometry.type,
+        });
+      }
+    };
 
     map.on("styledata", (event) => {
       const style = map.getStyle();
@@ -206,39 +302,6 @@
 
       for (const unregister of unregisterListeners) {
         unregister();
-      }
-
-      for (const layer of style.layers) {
-        if (!layer.metadata) continue;
-        const cursor =
-          layer.metadata["cursor"] ?? layer.metadata["libshumate:cursor"];
-
-        if (cursor) {
-          const mouseenter = (event: MapMouseEvent) => {
-            const features = map.queryRenderedFeatures(event.point);
-            if (features.length > 0) {
-              const canvas = mapContainer.querySelector(
-                ".maplibregl-canvas"
-              ) as HTMLElement;
-              canvas.style.cursor = cursor;
-            }
-          };
-          map.on("mouseenter", layer.id, mouseenter);
-          unregisterListeners.push(() =>
-            map.off("mouseenter", layer.id, mouseenter)
-          );
-
-          const mouseleave = () => {
-            const canvas = mapContainer.querySelector(
-              ".maplibregl-canvas"
-            ) as HTMLElement;
-            canvas.style.cursor = "grab";
-          };
-          map.on("mouseleave", layer.id, mouseleave);
-          unregisterListeners.push(() =>
-            map.off("mouseleave", layer.id, mouseleave)
-          );
-        }
       }
 
       if (isInspector) {
@@ -269,78 +332,8 @@
         });
       } else {
         const click = (event: MapMouseEvent) => {
-          if (event.originalEvent.target instanceof HTMLElement) {
-            const target = event.originalEvent.target as HTMLElement;
-            const marker = target.closest(".maplibregl-user-location-dot");
-            if (marker) {
-              try {
-                selectPlace(
-                  getLocation().then(
-                    (location) =>
-                      new Place({
-                        name: "Current Location",
-                        location: {
-                          lat: location.coords.latitude,
-                          lon: location.coords.longitude,
-                        },
-                        geometryType: "Point",
-                      })
-                  ),
-                  false
-                );
-              } catch {
-                // ignore
-              }
-              return;
-            }
-          }
-
-          const features: MapGeoJSONFeature[] = map
-            .queryRenderedFeatures(event.point)
-            .filter(
-              (f) =>
-                f.layer.metadata?.["cursor"] ??
-                f.layer.metadata?.["libshumate:cursor"]
-            );
-
-          if (features.length === 0) {
-            selectPlace(
-              new Place({
-                name: "Dropped Pin",
-                location: {
-                  lat: event.lngLat.lat,
-                  lon: event.lngLat.lng,
-                },
-                geometryType: "Point",
-              })
-            );
-          } else {
-            const feature = features[0];
-            const origin = feature.layer.metadata?.["place-origin"];
-
-            selectPlace(
-              new Place({
-                featureId: {
-                  id: feature.id,
-                  source: feature.source,
-                  sourceLayer: feature.sourceLayer,
-                },
-                location:
-                  feature.geometry.type === "Point"
-                    ? {
-                        lat: feature.geometry.coordinates[1],
-                        lon: feature.geometry.coordinates[0],
-                      }
-                    : {
-                        lat: event.lngLat.lat,
-                        lon: event.lngLat.lng,
-                      },
-                tags: feature.properties,
-                origin,
-                geometryType: feature.geometry.type,
-              }),
-            );
-          }
+          const place = placeFromEvent(event);
+          mapTool().onClick?.(event, place);
         };
         map.on("click", click);
         unregisterListeners.push(() => map.off("click", click));
@@ -356,6 +349,10 @@
 
       map.showTileBoundaries = isInspector;
     });
+
+    return () => {
+      selectedFeatureUnsub();
+    };
   });
 
   onDestroy(() => {

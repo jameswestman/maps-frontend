@@ -5,12 +5,10 @@
   import { AppState } from "../../AppState";
 
   const appState = AppState.fromContext();
+  const attributionOpen = appState.attributionOpen;
 
   const toggle = () => {
-    appState.update((a) => {
-      a.attributionOpen = !a.attributionOpen;
-      return a;
-    });
+    appState.attributionOpen.update((value) => !value);
   };
 
   const attribution = [
@@ -65,7 +63,7 @@
   attribution.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
-<Modal isOpen={$appState.attributionOpen} {toggle} scrollable>
+<Modal isOpen={$attributionOpen} {toggle} scrollable>
   <ModalHeader {toggle}>Attribution</ModalHeader>
   <ModalBody>
     {#each attribution as { name, description, link }}

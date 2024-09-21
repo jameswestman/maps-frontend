@@ -9,13 +9,14 @@ export class PlaceCardSubsystem extends Subsystem {
         {
           componentImport: () =>
             import("./PlaceCard.svelte").then((m) => m.default),
-          condition: () =>
-            derived(
-              AppState.fromContext(),
-              (appState) =>
-                appState.placeCardLoading ||
-                (appState.selectedFeature !== null && !appState.placeCardClosed)
-            ),
+          loadCondition: () => {
+            const appState = AppState.fromContext();
+            return derived(
+              [appState.selectedFeature, appState.placeCardClosed],
+              ([selectedFeature, placeCardClosed]) =>
+                selectedFeature !== null && !placeCardClosed
+            );
+          },
           order: 0,
         },
       ],

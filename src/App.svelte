@@ -15,7 +15,10 @@
   import { DevToolsSubsystem } from "./subsystems/devTools/DevToolsSubsystem";
   import { CustomMapsSubsystem } from "./subsystems/customMaps/CustomMapsSubsystem";
 
-  let subsystems = new Subsystems([
+  const appState = new AppState();
+  setContext("appState", appState);
+
+  const subsystems = new Subsystems([
     new PlaceCardSubsystem(),
     new Isochrone(),
     new WikipediaSubsystem(),
@@ -25,13 +28,9 @@
     new DevToolsSubsystem(),
     new CustomMapsSubsystem(),
   ]);
-
-  const rootComponents = subsystems.components('appRoot');
-
-  let appState = writable(new AppState());
-
   setContext("subsystems", subsystems);
-  setContext("appState", appState);
+
+  const rootComponents = subsystems.components("appRoot");
 
   onMount(() => {
     subsystems.onMount();
@@ -39,20 +38,12 @@
   });
 
   (window as any).showAttributionDialog = () => {
-    appState.update((a) => {
-      a.attributionOpen = true;
-      return a;
-    });
+    appState.attributionOpen.set(true);
   };
 </script>
 
 <div>
-  <MapView
-    bind:zoom={$appState.zoom}
-    bind:lat={$appState.center.lat}
-    bind:lng={$appState.center.lng}
-    bind:selectedPlace={$appState.selectedFeature}
-  />
+  <MapView />
 
   <Sidebar />
 

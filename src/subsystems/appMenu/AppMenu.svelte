@@ -17,13 +17,12 @@
   const subsystems = Subsystems.fromContext();
   const appState = AppState.fromContext();
 
+  const appMenuOpen = appState.appMenuOpen;
+
   const menuSections = subsystems.components("menuSections");
 
   const toggle = () => {
-    appState.update((a) => {
-      a.appMenuOpen = !a.appMenuOpen;
-      return a;
-    });
+    appMenuOpen.update((value) => !value);
   };
 
   let feedback: Feedback;
@@ -52,7 +51,7 @@
 </script>
 
 <Offcanvas
-  isOpen={$mounted && $appState.appMenuOpen}
+  isOpen={$mounted && $appMenuOpen}
   {toggle}
   header="Menu"
   backdrop

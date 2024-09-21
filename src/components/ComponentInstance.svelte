@@ -7,9 +7,9 @@
   export let args: any | null = null;
 
   let condition =
-    typeof component.condition === "function"
-      ? component.condition()
-      : component.condition;
+    typeof component.loadCondition === "function"
+      ? component.loadCondition()
+      : component.loadCondition;
 
   let resolvedComponent: Promise<ComponentType> = null;
 

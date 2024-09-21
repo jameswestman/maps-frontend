@@ -1,7 +1,8 @@
 import type { ExpressionSpecification, Map } from "maplibre-gl";
 import { luminance, parseColor } from "../../utils/color";
+import type { MapFile } from "./MapFile";
 
-export const addStyle = (sourceId: string, map: Map, fileName: string) => {
+export const addStyle = (map: Map, mapFile: MapFile) => {
   const colorExpr = (prop: string, def: string): ExpressionSpecification => [
     "coalesce",
     ["get", prop],
@@ -38,16 +39,17 @@ export const addStyle = (sourceId: string, map: Map, fileName: string) => {
 
   const metadata = {
     cursor: "pointer",
+    "custom-map": true,
     "place-origin": {
       type: "custom-map",
-      name: fileName,
+      name: mapFile.name,
     },
   };
 
   map.addLayer({
-    id: sourceId + "-polygons",
+    id: mapFile.sourceId + "-polygons",
     type: "fill",
-    source: sourceId,
+    source: mapFile.sourceId,
     filter: ["in", ["geometry-type"], ["literal", ["Polygon", "MultiPolygon"]]],
     layout: {},
     paint: {
@@ -59,9 +61,9 @@ export const addStyle = (sourceId: string, map: Map, fileName: string) => {
   });
 
   map.addLayer({
-    id: sourceId + "-lines",
+    id: mapFile.sourceId + "-lines",
     type: "line",
-    source: sourceId,
+    source: mapFile.sourceId,
     filter: [
       "in",
       ["geometry-type"],
@@ -73,16 +75,16 @@ export const addStyle = (sourceId: string, map: Map, fileName: string) => {
     },
     paint: {
       "line-color": strokeColor,
-      "line-width": ["coalesce", ["get", "stroke-width"], 1],
+      "line-width": ["coalesce", ["get", "stroke-width"], 2],
       "line-opacity": ["coalesce", ["get", "stroke-opacity"], 1],
     },
     metadata,
   });
 
   map.addLayer({
-    id: sourceId + "-points",
+    id: mapFile.sourceId + "-points",
     type: "symbol",
-    source: sourceId,
+    source: mapFile.sourceId,
     filter: ["in", ["geometry-type"], ["literal", ["Point", "MultiPoint"]]],
     layout: {
       "text-font": ["Noto Sans Regular"],
@@ -119,6 +121,12 @@ export const addStyle = (sourceId: string, map: Map, fileName: string) => {
     },
     metadata,
   });
+};
+
+export const removeStyle = (sourceId: string, map: Map) => {
+  map.removeLayer(sourceId + "-polygons");
+  map.removeLayer(sourceId + "-lines");
+  map.removeLayer(sourceId + "-points");
 };
 
 export const handleStyleImageMissing = (imageId: string, map: Map) => {

@@ -20,9 +20,9 @@ export const isMounted = () => {
 };
 
 let nextUniqueId = 0;
-export const uniqueId = () => {
-  return 'E' + nextUniqueId++;
-}
+export const uniqueId = (prefix: string = "E") => {
+  return prefix + nextUniqueId++;
+};
 
 export const addMapLayerUnder = (
   map: Map,

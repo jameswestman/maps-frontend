@@ -22,10 +22,9 @@
     block
     class="d-flex justify-content-between align-items-center"
     on:click={() => {
-      appState.update((s) => {
-        s.activeSidebarTab = import("./RoutingCard.svelte").then((x) => x.default);
-        return s;
-      });
+      appState.activeSidebarTab.set(
+        import("./RoutingCard.svelte").then((x) => x.default)
+      );
     }}
   >
     <span class="text-start">

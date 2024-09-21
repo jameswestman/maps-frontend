@@ -102,7 +102,7 @@ export interface DeferredSubsystemComponent extends SubsystemComponentShared {
 }
 
 export interface SubsystemComponentShared {
-  condition?: Readable<boolean> | (() => Readable<boolean>);
+  loadCondition?: Readable<boolean> | (() => Readable<boolean>);
   order?: number;
 }
 

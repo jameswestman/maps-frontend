@@ -10,9 +10,11 @@
   import { faFile } from "@fortawesome/free-solid-svg-icons";
 
   const subsystems: Subsystems = getContext("subsystems");
-  const components = subsystems.components('placeCard');
+  const components = subsystems.components("placeCard");
 
   const appState = AppState.fromContext();
+  const selectedFeature = appState.selectedFeature;
+  const placeCardClosed = appState.placeCardClosed;
 
   let closed = false;
 
@@ -24,7 +26,7 @@
   $: population = parseInt(place?.tags["osm:population"]);
 
   $: {
-    place = $appState.selectedFeature;
+    place = $selectedFeature;
     if (place !== lastPlace) {
       lastPlace = place;
       closed = false;
@@ -43,7 +45,7 @@
     })[type] ?? "Feature";
 </script>
 
-{#if place && !$appState.placeCardClosed}
+{#if place && !$placeCardClosed}
   <Card class="scroll">
     <CardBody>
       <span class="d-flex flex-row">
@@ -51,7 +53,9 @@
           {#if place.name}
             {place.name}
           {:else if place.origin.type === "custom-map"}
-            <span class="opacity-50">Untitled {geometryName(place.geometryType)}</span>
+            <span class="opacity-50"
+              >Untitled {geometryName(place.geometryType)}</span
+            >
           {/if}
         </h3>
         <span class="flex-grow-1" />
@@ -60,7 +64,7 @@
           class="btn-close"
           aria-label="Close"
           class:btn-close-white={$resolvedTheme === "dark"}
-          on:click={() => ($appState.placeCardClosed = true)}
+          on:click={() => ($placeCardClosed = true)}
         />
       </span>
       {#if place.origin?.name}
@@ -87,11 +91,5 @@
     {#each components as component}
       <ComponentInstance {component} args={{ place }} />
     {/each}
-  </Card>
-{:else if $appState.placeCardLoading}
-  <Card class="mt-3">
-    <CardBody>
-      <Spinner />
-    </CardBody>
   </Card>
 {/if}

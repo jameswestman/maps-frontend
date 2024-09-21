@@ -1,27 +1,32 @@
 import { getContext, type ComponentType } from "svelte";
-import { type Writable } from "svelte/store";
-import type { Place } from "./Place";
-import type { Map } from "maplibre-gl";
+import { readonly, writable } from "svelte/store";
+import type { Location, Place } from "./Place";
+import { type MapTool } from "./MapTool";
 
 export class AppState {
-  public static fromContext(): Writable<AppState> {
-    return getContext<Writable<AppState>>("appState");
+  public static fromContext(): AppState {
+    return getContext<AppState>("appState");
   }
 
   public constructor() {}
 
-  public zoom = 0;
-  public center = {
-    lat: 0,
-    lng: 0,
-  };
+  public readonly zoom = writable(0);
+  public readonly center = writable<Location>({ lat: 0, lon: 0 });
 
-  public selectedFeature: Place | null = null;
-  public placeCardClosed = false;
-  public placeCardLoading = false;
+  public readonly selectedFeature = writable<Place | null>(null);
+  public readonly placeCardClosed = writable(true);
 
-  public activeSidebarTab: ComponentType | Promise<ComponentType> | null = null;
+  public readonly activeSidebarTab = writable<
+    ComponentType | Promise<ComponentType> | null
+  >(null);
 
-  public attributionOpen = false;
-  public appMenuOpen = false;
+  public readonly attributionOpen = writable(false);
+  public readonly appMenuOpen = writable(false);
+
+  public readonly _$mapTool = writable<MapTool>(null);
+  public readonly mapTool = readonly(this._$mapTool);
+
+  public setMapTool(tool: MapTool) {
+    this._$mapTool.set(tool);
+  }
 }

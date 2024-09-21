@@ -18,6 +18,7 @@ export class Place {
   public readonly featureId?: FeatureIdentifier;
   public readonly geometryType?: GeoJSON.GeoJsonGeometryTypes;
   public readonly origin?: PlaceOrigin;
+  public readonly showMarker: boolean;
 
   constructor({
     name,
@@ -26,6 +27,7 @@ export class Place {
     featureId,
     origin,
     geometryType,
+    showMarker,
   }: {
     name?: string;
     location: Location;
@@ -33,6 +35,7 @@ export class Place {
     featureId?: FeatureIdentifier;
     origin?: PlaceOrigin;
     geometryType?: GeoJSON.GeoJsonGeometryTypes;
+    showMarker?: boolean;
   }) {
     this.originalName = name;
     this.location = location;
@@ -40,6 +43,7 @@ export class Place {
     this.featureId = featureId;
     this.origin = origin;
     this.geometryType = geometryType;
+    this.showMarker = showMarker ?? true;
   }
 
   public get name() {

@@ -9,10 +9,7 @@
 
   const openFile = (event: Event) => {
     customLayers.dropFiles((event.target as HTMLInputElement).files);
-    appState.update((a) => {
-      a.appMenuOpen = false;
-      return a;
-    });
+    appState.appMenuOpen.set(false);
   };
 
   let fileInput: HTMLInputElement;

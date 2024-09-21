@@ -6,15 +6,8 @@
 
   const appState = AppState.fromContext();
 
-  let zoom = 0;
-  let lat = 0;
-  let lng = 0;
-
-  $: {
-    zoom = $appState.zoom;
-    lat = $appState.center.lat;
-    lng = $appState.center.lng;
-  }
+  let zoom = appState.zoom;
+  let center = appState.center;
 
   const inputId = uniqueId();
 </script>
@@ -24,19 +17,19 @@
     <div class="card-body">
       <span>Open in:</span>
       <a
-        href="https://openstreetmap.org/#map={zoom + 1}/{lat}/{lng}"
+        href="https://openstreetmap.org/#map={$zoom + 1}/{$center.lat}/{$center.lon}"
         target="_blank"
       >
         OSM
       </a>
       <a
-        href="https://google.com/maps/@{lat},{lng},{zoom + 1}z"
+        href="https://google.com/maps/@{$center.lat},{$center.lon},{$zoom + 1}z"
         target="_blank"
       >
         Google Maps
       </a>
       <a
-        href="https://bing.com/maps?cp={lat}~{lng}&lvl={zoom + 1}"
+        href="https://bing.com/maps?cp={$center.lat}~{$center.lon}&lvl={$zoom + 1}"
         target="_blank"
       >
         Bing Maps

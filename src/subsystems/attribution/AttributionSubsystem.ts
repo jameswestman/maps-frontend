@@ -9,11 +9,7 @@ export class AttributionSubsystem extends Subsystem {
         {
           componentImport: () =>
             import("./Attribution.svelte").then((m) => m.default),
-          condition: () =>
-            derived(
-              AppState.fromContext(),
-              ($appState) => $appState.attributionOpen
-            ),
+          loadCondition: () => AppState.fromContext().attributionOpen,
           order: 100,
         },
       ],

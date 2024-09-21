@@ -18,10 +18,9 @@
 
   const getDirections = () => {
     routing.getDirections(place);
-    appState.update((s) => {
-      s.activeSidebarTab = import("./RoutingCard.svelte").then(x => x.default);
-      return s;
-    });
+    appState.activeSidebarTab.set(
+      import("./RoutingCard.svelte").then((x) => x.default)
+    );
   };
 
   let alreadyAdded = false;
@@ -30,11 +29,13 @@
   }
   $: {
     routingAvailable = false;
-    reverseGeocode(place.location).then((result) => {
-      routingAvailable = result.some((r) => r.name === "United States");
-    }).catch((e) => {
-      console.error(e);
-    });
+    reverseGeocode(place.location)
+      .then((result) => {
+        routingAvailable = result.some((r) => r.name === "United States");
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 </script>
 
