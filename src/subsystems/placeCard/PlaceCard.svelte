@@ -52,10 +52,10 @@
         <h3 class="mb-0">
           {#if place.name}
             {place.name}
-          {:else if place.origin.type === "custom-map"}
-            <span class="opacity-50"
-              >Untitled {geometryName(place.geometryType)}</span
-            >
+          {:else if place.origin?.type === "custom-map"}
+            <span class="opacity-50">
+              Untitled {geometryName(place.geometryType)}
+            </span>
           {/if}
         </h3>
         <span class="flex-grow-1" />
