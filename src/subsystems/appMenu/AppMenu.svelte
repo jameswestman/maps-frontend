@@ -112,6 +112,18 @@
           Feedback
         </button>
       </ListGroup>
+
+      <ListGroup flush>
+        <ListGroupItem>
+          <h2 class="h6 mt-3 mb-0" style="font-weight: bold;">Support maps.jwestman.net</h2>
+        </ListGroupItem>
+        <ListGroupItem href="https://github.com/sponsors/jameswestman" target="_blank">
+          GitHub Sponsors
+        </ListGroupItem>
+        <ListGroupItem href="https://www.patreon.com/jwestman" target="_blank">
+          Patreon
+        </ListGroupItem>
+      </ListGroup>
     </div>
 
     <div class="opacity-50 text-center" style="font-size: 0.75em">
