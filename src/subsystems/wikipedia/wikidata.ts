@@ -37,8 +37,8 @@ export const fetchBlurb = async (entity: WikidataEntity) => {
       `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`
     );
     const data = await response.json();
-    return [data.extract, data.content_urls.desktop.page];
+    return { summary: data.extract, url: data.content_urls.desktop.page };
   } else {
-    return [undefined, undefined];
+    return null;
   }
 };

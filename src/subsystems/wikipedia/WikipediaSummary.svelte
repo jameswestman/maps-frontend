@@ -23,8 +23,7 @@
       if (qid) {
         setWikipedia(async () => {
           const entity = await fetchWikidata(qid);
-          const [summary, url] = await fetchBlurb(entity);
-          return { summary, url };
+          return await fetchBlurb(entity);
         });
       }
     }
