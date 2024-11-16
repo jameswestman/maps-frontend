@@ -13,7 +13,7 @@
 </script>
 
 {#if $devToolsEnabled}
-  <div class="card">
+  <div class="card mt-3">
     <div class="card-body">
       <span>Open in:</span>
       <a

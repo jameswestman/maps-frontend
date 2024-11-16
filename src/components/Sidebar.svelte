@@ -1,14 +1,13 @@
 <script lang="ts">
-  import { Subsystems } from "../subsystems/Subsystem";
-  import ThemeSwitcher from "./ThemeSwitcher.svelte";
-  import InspectorCard from "./InspectorCard.svelte";
-  import { AppState } from "../AppState";
-  import { fly } from "svelte/transition";
-  import { Button } from "@sveltestrap/sveltestrap";
-  import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
   import { faBars } from "@fortawesome/free-solid-svg-icons";
-  import ComponentInstance from "./ComponentInstance.svelte";
+  import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+  import { Button } from "@sveltestrap/sveltestrap";
+  import { fly } from "svelte/transition";
+  import { AppState } from "../AppState";
+  import { Subsystems } from "../subsystems/Subsystem";
   import { resolvedTheme } from "../theme";
+  import ComponentInstance from "./ComponentInstance.svelte";
+  import ThemeSwitcher from "./ThemeSwitcher.svelte";
 
   const subsystems = Subsystems.fromContext();
 
@@ -30,13 +29,13 @@
 >
   <div class="h-100 d-flex flex-row" style="pointer-events: none">
     <div
-      class="p-3 overflow-scroll h-100"
+      class="p-3 h-100"
       style="pointer-events: none; width: calc(max(50%, 300px)); max-width: calc(min(400px, 100%));"
     >
-      <div style="pointer-events: auto; position: relative;">
+      <div class="h-100" style="pointer-events: auto;">
         {#if $activeSidebarTab == null}
-          <div transition:fly={{ x: -200 }}>
-            <div style="position: absolute; width: 100%; max-width: 100%;">
+          <div transition:fly={{ x: -200 }} class="h-100">
+            <div class="d-flex flex-column h-100">
               <div class="d-flex">
                 <Button
                   color={$resolvedTheme === "light" ? "light" : "secondary"}
@@ -48,14 +47,8 @@
                 <ThemeSwitcher />
               </div>
 
-              <div class="mt-3">
-                <InspectorCard />
-              </div>
-
               {#each sidebarItems as component}
-                <div class="mt-3">
-                  <ComponentInstance {component} />
-                </div>
+                <ComponentInstance {component} />
               {/each}
             </div>
           </div>

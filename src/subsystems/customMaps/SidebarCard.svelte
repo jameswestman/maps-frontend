@@ -22,7 +22,7 @@
 </script>
 
 {#if $mapFiles.length > 0}
-  <Card>
+  <Card class="mt-3">
     <ListGroup flush>
       {#each $mapFiles as mapFile}
         <ListGroupItem>
