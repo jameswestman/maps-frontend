@@ -32,10 +32,10 @@
       class="p-3 h-100"
       style="pointer-events: none; width: calc(max(50%, 300px)); max-width: calc(min(400px, 100%));"
     >
-      <div class="h-100" style="pointer-events: auto;">
+      <div class="h-100">
         {#if $activeSidebarTab == null}
           <div transition:fly={{ x: -200 }} class="h-100">
-            <div class="d-flex flex-column h-100">
+            <div class="d-flex flex-column h-100 sidebar-content">
               <div class="d-flex">
                 <Button
                   color={$resolvedTheme === "light" ? "light" : "secondary"}
@@ -84,3 +84,9 @@
     </div>
   </div>
 </div>
+
+<style>
+  :global(.sidebar-content > *) {
+    pointer-events: auto;
+  }
+</style>
