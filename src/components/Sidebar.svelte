@@ -38,13 +38,13 @@
           <div transition:fly={{ x: -200 }} class="position-absolute top-0 bottom-0 start-0 end-0">
             <div class="d-flex flex-column h-100 w-100 sidebar-content">
               <div class="d-flex">
-                <Button
-                  color={$resolvedTheme === "light" ? "light" : "secondary"}
-                  class="me-3"
+                <button
+                  class="btn me-3 btn-{$resolvedTheme}"
+                  class:btn-outline-secondary={$resolvedTheme === "dark"}
                   on:click={openAppMenu}
                 >
                   <FontAwesomeIcon icon={faBars} />
-                </Button>
+              </button>
 
                 {#each searchBarItems as component}
                   <ComponentInstance {component} />
