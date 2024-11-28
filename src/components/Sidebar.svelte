@@ -33,10 +33,10 @@
       class="p-3 h-100"
       style="pointer-events: none; width: calc(max(50%, 300px)); max-width: calc(min(400px, 100%));"
     >
-      <div class="h-100">
+      <div class="h-100 position-relative">
         {#if $activeSidebarTab == null}
-          <div transition:fly={{ x: -200 }} class="h-100">
-            <div class="d-flex flex-column h-100 sidebar-content">
+          <div transition:fly={{ x: -200 }} class="position-absolute top-0 bottom-0 start-0 end-0">
+            <div class="d-flex flex-column h-100 w-100 sidebar-content">
               <div class="d-flex">
                 <Button
                   color={$resolvedTheme === "light" ? "light" : "secondary"}
@@ -57,8 +57,8 @@
             </div>
           </div>
         {:else}
-          <div transition:fly={{ x: 200 }}>
-            <div style="position: absolute; width: 100%; max-width: 100%;">
+          <div transition:fly={{ x: 200 }} class="position-absolute top-0 bottom-0 start-0 end-0">
+            <div class="d-flex flex-column h-100 w-100 sidebar-content">
               {#await $activeSidebarTab}
                 <div class="text-center">
                   <div class="spinner-border text-primary" role="status">

@@ -20,7 +20,7 @@
   <Button
     color="primary"
     block
-    class="d-flex justify-content-between align-items-center"
+    class="d-flex justify-content-between align-items-center mt-3"
     on:click={() => {
       appState.activeSidebarTab.set(
         import("./RoutingCard.svelte").then((x) => x.default)
