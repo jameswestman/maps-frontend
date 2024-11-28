@@ -14,6 +14,7 @@
   import { AttributionSubsystem } from "./subsystems/attribution/AttributionSubsystem";
   import { DevToolsSubsystem } from "./subsystems/devTools/DevToolsSubsystem";
   import { CustomMapsSubsystem } from "./subsystems/customMaps/CustomMapsSubsystem";
+  import { SearchSubsystem } from "./subsystems/search/SearchSubsystem";
 
   const appState = new AppState();
   setContext("appState", appState);
@@ -27,6 +28,7 @@
     new AttributionSubsystem(),
     new DevToolsSubsystem(),
     new CustomMapsSubsystem(),
+    new SearchSubsystem(),
   ]);
   setContext("subsystems", subsystems);
 

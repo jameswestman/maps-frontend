@@ -13,6 +13,7 @@
 
   const sidebarItems = subsystems.components("sidebar");
   const toolbarItems = subsystems.components("toolbar");
+  const searchBarItems = subsystems.components("searchBar");
 
   const appState = AppState.fromContext();
   const appMenuOpen = appState.appMenuOpen;
@@ -44,7 +45,10 @@
                 >
                   <FontAwesomeIcon icon={faBars} />
                 </Button>
-                <ThemeSwitcher />
+
+                {#each searchBarItems as component}
+                  <ComponentInstance {component} />
+                {/each}
               </div>
 
               {#each sidebarItems as component}

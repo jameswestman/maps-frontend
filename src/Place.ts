@@ -7,7 +7,7 @@ export interface Location {
 }
 
 export interface PlaceOrigin {
-  type: "osm" | "custom-map";
+  type: "osm" | "nominatim" | "custom-map";
   name?: string;
 }
 
