@@ -164,6 +164,7 @@ export const aerialLabel = (config) => {
         },
         paint: {
             "text-color": labelColor,
+            ...config.halo(),
         },
     };
 };

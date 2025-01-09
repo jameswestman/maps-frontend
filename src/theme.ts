@@ -10,11 +10,13 @@ export enum ThemeVariant {
 
 export interface Theme {
   variant: ThemeVariant;
+  satellite: boolean;
   inspector: boolean;
 }
 
 export const theme = persisted("theme2", {
   variant: ThemeVariant.SYSTEM,
+  satellite: false,
   inspector: false,
 });
 

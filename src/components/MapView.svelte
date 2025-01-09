@@ -49,11 +49,18 @@
     } else {
       const style = generateMapStyle({
         colorScheme: theme.variant === ThemeVariant.DARK ? "dark" : "light",
+        satellite: theme.satellite,
         renderer: "maplibre-gl-js",
         textScale: 1,
       });
 
       map.setStyle(style);
+
+      if (theme.satellite) {
+        map.setMaxBounds([-170, 6, -12, 85])
+      } else {
+        map.setMaxBounds(null);
+      }
     }
 
     map.once("styledata", () => {

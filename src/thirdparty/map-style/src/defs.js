@@ -45,7 +45,11 @@ export const DEFS = {
             dark: "#ffffff",
             light: "#000000",
         },
+        halo: {
+            satellite: "#202020"
+        },
         water: {
+            satellite: "#010330",
             dark: "#0f2f5e",
             light: "#99c1f1",
         },

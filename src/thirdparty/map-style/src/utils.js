@@ -15,9 +15,12 @@
  * License along with this library; if not, see <https://www.gnu.org/licenses/>.
  */
 
+import { DEFS } from "./defs";
+
 /**
  * @typedef {Object} MapStyleConfigParams
  * @property {"dark" | "light"} [colorScheme] Color scheme
+ * @property {boolean} [satellite] Whether to include satellite imagery
  * @property {"libshumate" | "maplibre-gl-js"} [renderer] Renderer to target
  * @property {number} [textScale] Text scale factor
  * @property {string} [language] Language code
@@ -29,6 +32,7 @@ export class MapStyleConfig {
      */
     constructor(options) {
         this.colorScheme = options.colorScheme ?? "light";
+        this.satellite = options.satellite ?? false;
         this.renderer = options.renderer ?? "libshumate";
         this.textScale = options.textScale ?? 1;
         this.language = options.language;
@@ -37,13 +41,14 @@ export class MapStyleConfig {
     pick(colorDef) {
         if (typeof colorDef === "undefined") {
             return undefined;
-        } else if (
-            typeof colorDef.dark === "undefined" &&
-            typeof colorDef.light === "undefined"
-        ) {
+        } else if (typeof colorDef !== "object") {
             return colorDef;
         } else {
-            return colorDef[this.colorScheme];
+            if (this.satellite) {
+                return colorDef.satellite ?? colorDef.dark;
+            } else {
+                return colorDef[this.colorScheme];
+            }
         }
     }
 
@@ -113,6 +118,39 @@ export class MapStyleConfig {
       } else {
         return classExpression;
       }
+    }
+
+    halo(width) {
+        const selected = this.pick(DEFS.highlightColor);
+        const haloColor = this.pick(DEFS.colors.halo) ?? "rgba(0, 0, 0, 0)";
+        width = width ?? 2;
+
+        return {
+            "text-halo-color": [
+                "case",
+                ["coalesce", ["feature-state", "selected"], false],
+                selected,
+                haloColor
+            ],
+            "text-halo-width": [
+                "case",
+                ["coalesce", ["feature-state", "selected"], false],
+                1,
+                this.pick(DEFS.colors.halo) ? width : 0
+            ],
+            "icon-halo-color": [
+                "case",
+                ["coalesce", ["feature-state", "selected"], false],
+                selected,
+                haloColor
+            ],
+            "icon-halo-width": [
+                "case",
+                ["coalesce", ["feature-state", "selected"], false],
+                1,
+                this.pick(DEFS.colors.halo) ? width : 0
+            ],
+        }
     }
 }
 

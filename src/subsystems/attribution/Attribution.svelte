@@ -58,6 +58,11 @@
       description: "Highway shield icons",
       link: "https://americanamap.org/",
     },
+    {
+      name: "Copernicus Sentinel-2 Global Mosaic",
+      description: "Contains modified Copernicus Sentinel data 2024",
+      link: "https://documentation.dataspace.copernicus.eu/Data/SentinelMissions/Sentinel2.html#sentinel-2-level-3-quarterly-mosaics"
+    }
   ];
 
   attribution.sort((a, b) => a.name.localeCompare(b.name));

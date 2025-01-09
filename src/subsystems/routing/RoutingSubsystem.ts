@@ -50,7 +50,9 @@ export class RoutingSubsystem extends Subsystem {
     }
 
     const casingColor =
-      theme.variant === ThemeVariant.DARK ? "#007fff" : "#ccccff";
+      theme.variant === ThemeVariant.DARK && !theme.satellite
+        ? "#007fff"
+        : "#ccccff";
 
     map.addLayer(
       {

@@ -43,8 +43,7 @@ export const places = (config) =>
         },
         paint: {
             "text-color": config.pick(place.color),
-            "text-halo-color": ["case", ["feature-state", "selected"], config.pick(DEFS.highlightColor), "rgba(0, 0, 0, 0)"],
-            "text-halo-width": ["case", ["feature-state", "selected"], 2, 0],
+            ...config.halo(1),
         },
         metadata: {
             "libshumate:cursor": "pointer",

@@ -414,6 +414,7 @@ export const roadSymbol = (config) => ({
     },
     paint: {
         "text-color": config.pick(DEFS.colors.foreground),
+        ...config.halo(1),
     },
 });
 
@@ -473,5 +474,6 @@ export const junctionSymbol = (config) => ({
             16,
             config.pick({ dark: "#ffffff", light: "#000000" }),
         ],
+        ...config.halo(1),
     },
 });

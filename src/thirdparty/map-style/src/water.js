@@ -62,6 +62,10 @@ const waterLabelSize = (config) => [
 ];
 
 const waterLabelColor = (config) => {
+    if (config.satellite) {
+        return "#9f9fff";
+    }
+
     const waterColor = config.pick(DEFS.colors.water);
     if (config.colorScheme === "dark") {
         return mix(waterColor, "#ffffff", 0.6);
@@ -69,6 +73,16 @@ const waterLabelColor = (config) => {
         return mix(waterColor, "#000000", 0.7);
     }
 };
+
+const waterHaloColor = (config) => {
+    if (config.satellite) {
+        return config.pick(DEFS.colors.water);
+    } else {
+        return "rgba(0, 0, 0, 0)";
+    }
+}
+
+const waterHaloWidth = (config) => config.satellite ? 2 : 0;
 
 export const waterName = (config) => ({
     id: "water-name",
@@ -83,6 +97,8 @@ export const waterName = (config) => ({
     },
     paint: {
         "text-color": waterLabelColor(config),
+        "text-halo-color": waterHaloColor(config),
+        "text-halo-width": waterHaloWidth(config),
     },
     metadata: {
         "libshumate:cursor": "pointer",
@@ -103,6 +119,8 @@ export const waterNameLine = (config) => ({
     },
     paint: {
         "text-color": waterLabelColor(config),
+        "text-halo-color": waterHaloColor(config),
+        "text-halo-width": waterHaloWidth(config),
     },
 });
 
@@ -120,6 +138,8 @@ export const waterwayName = (config) => ({
     },
     paint: {
         "text-color": waterLabelColor(config),
+        "text-halo-color": waterHaloColor(config),
+        "text-halo-width": waterHaloWidth(config),
     },
     metadata: {
         "libshumate:cursor": "pointer",

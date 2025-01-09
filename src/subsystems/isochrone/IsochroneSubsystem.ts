@@ -24,6 +24,8 @@ export class Isochrone extends Subsystem {
       },
     });
 
+    const dark = theme.variant === ThemeVariant.DARK && !theme.satellite;
+
     addMapLayerUnder(map, "poi", {
       id: "isochrone-line",
       source: "isochrone",
@@ -34,8 +36,7 @@ export class Isochrone extends Subsystem {
         "line-join": "round",
       },
       paint: {
-        "line-color":
-          theme.variant === ThemeVariant.DARK ? "#00607f" : "#007fff",
+        "line-color": dark ? "#00607f" : "#007fff",
         "line-opacity": 0.5,
         "line-width": ["/", 60, ["get", "contour"]],
         "line-dasharray": [2, 2],
@@ -53,10 +54,8 @@ export class Isochrone extends Subsystem {
         "text-overlap": "always",
       },
       paint: {
-        "text-color":
-          theme.variant === ThemeVariant.DARK ? "#00607f" : "#007fff",
-        "text-halo-color":
-          theme.variant === ThemeVariant.DARK ? "#000" : "#fff",
+        "text-color": dark ? "#00607f" : "#007fff",
+        "text-halo-color": dark ? "#000" : "#fff",
         "text-halo-width": 1,
       },
     });

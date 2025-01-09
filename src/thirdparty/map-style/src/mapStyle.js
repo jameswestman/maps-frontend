@@ -46,6 +46,8 @@ import { hillshadeLayer } from "./hillshade.js";
 export function generateMapStyle(options) {
   const config = new MapStyleConfig(options);
 
+  const notSatellite = config.satellite ? (x) => [] : (x) => [x];
+
   const layeredLayers = [];
   for (let layerNum = DEFS.minLayer; layerNum <= DEFS.maxLayer; layerNum++) {
     const filter =
@@ -58,24 +60,40 @@ export function generateMapStyle(options) {
     layeredLayers.push(...aerial(config, layerNum, filter));
 
     if (layerNum === 0) {
-      layeredLayers.push(...airportLayers(config));
+      if (!config.satellite) {
+        layeredLayers.push(...airportLayers(config));
+      }
       layeredLayers.push(...buildings(config));
     }
   }
 
+  const sources = {
+    "vector-tiles": {
+      type: "vector",
+      url: "https://tiles.maps.jwestman.net/data/streets_v3.json",
+    },
+    terrain: {
+      type: "raster-dem",
+      url: "https://tiles.maps.jwestman.net/data/terrain.json",
+    },
+  };
+
+  if (config.satellite) {
+    sources.satellite = {
+      type: "raster",
+      url: "https://tiles.maps.jwestman.net/data/satellite.json",
+      tileSize: 256,
+    };
+  }
+
   const style = {
     version: 8,
-    name: options.colorScheme === "dark" ? "Dark" : "Light",
-    sources: {
-      "vector-tiles": {
-        type: "vector",
-        url: "https://tiles.maps.jwestman.net/data/streets_v3.json",
-      },
-      terrain: {
-        type: "raster-dem",
-        url: "https://tiles.maps.jwestman.net/data/terrain.json",
-      },
-    },
+    name: options.satellite
+      ? "Satellite"
+      : options.colorScheme === "dark"
+      ? "Dark"
+      : "Light",
+    sources,
     /* Not used by libshumate, but necessary for Mapbox GL JS */
     glyphs: "https://tiles.maps.jwestman.net/fonts/{fontstack}/{range}.pbf",
     layers: [
@@ -86,10 +104,19 @@ export function generateMapStyle(options) {
           "background-color": config.pick(DEFS.colors.background),
         },
       },
-      landcover(config),
-      hillshadeLayer(config),
+      ...notSatellite(landcover(config)),
       waterFill(config),
-      waterLine(config),
+      ...(config.satellite
+        ? [
+            {
+              id: "satellite",
+              type: "raster",
+              source: "satellite",
+            },
+          ]
+        : []),
+      hillshadeLayer(config),
+      ...notSatellite(waterLine(config)),
       ...boundaries(config),
       ...layeredLayers,
       ferryLine(config),

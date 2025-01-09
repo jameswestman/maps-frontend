@@ -39,6 +39,14 @@
     });
   };
 
+  const toggleSatellite = (e: Event) => {
+    const target: HTMLInputElement = e.target as HTMLInputElement;
+    theme.set({
+      ...$theme,
+      satellite: target.checked,
+    });
+  };
+
   const toggleDevTools = (e: Event) => {
     const target: HTMLInputElement = e.target as HTMLInputElement;
     devToolsEnabled.set(target.checked);
@@ -48,6 +56,7 @@
 
   const darkModeInputID = uniqueId();
   const devToolsInputID = uniqueId();
+  const satelliteInputID = uniqueId();
 </script>
 
 <Offcanvas
@@ -77,6 +86,22 @@
             />
             <label class="form-check-label" for={darkModeInputID}>
               Dark Mode
+            </label>
+          </div>
+        </ListGroupItem>
+
+        <ListGroupItem>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id={satelliteInputID}
+              checked={$theme.satellite}
+              on:change={toggleSatellite}
+            />
+            <label class="form-check-label" for={darkModeInputID}>
+              Satellite
+              <small class="d-block opacity-75">North America only</small>
             </label>
           </div>
         </ListGroupItem>
