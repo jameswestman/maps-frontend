@@ -202,7 +202,7 @@
     </CardBody>
   </Card>
 {:else if $routeResultState.status === "success" && $routeResultState.value}
-  <Card class="scroll mt-3">
+  <Card class="overflow-auto mt-3">
     <CardBody>
       <div class="d-flex justify-content-between">
         <span class="fs-4">
