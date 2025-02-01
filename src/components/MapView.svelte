@@ -57,7 +57,7 @@
       map.setStyle(style);
 
       if (theme.satellite) {
-        map.setMaxBounds([-170, 6, -12, 85])
+        map.setMaxBounds([-170, 6, -12, 85]);
       } else {
         map.setMaxBounds(null);
       }
@@ -249,7 +249,7 @@
 
     const unregisterListeners: (() => void)[] = [];
 
-    const placeFromEvent = (event: MapMouseEvent) => {
+    const placeFromEvent = (event: MapMouseEvent): Place | null => {
       if (event.originalEvent.target instanceof HTMLElement) {
         const target = event.originalEvent.target as HTMLElement;
         const marker = target.closest(".maplibregl-user-location-dot");

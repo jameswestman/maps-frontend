@@ -7,6 +7,5 @@ export interface MapTool {
 
   getCursor?(features: MapGeoJSONFeature[]): string;
 
-  onClick?(event: MapMouseEvent, place: Place): void;
+  onClick?(event: MapMouseEvent, place: Place | null): void;
 }
-
