@@ -15,6 +15,7 @@
   import { DevToolsSubsystem } from "./subsystems/devTools/DevToolsSubsystem";
   import { CustomMapsSubsystem } from "./subsystems/customMaps/CustomMapsSubsystem";
   import { SearchSubsystem } from "./subsystems/search/SearchSubsystem";
+  import { MeasurementSubsystem } from "./subsystems/measurement/MeasurementSubsystem";
 
   const appState = new AppState();
   setContext("appState", appState);
@@ -29,6 +30,7 @@
     new DevToolsSubsystem(),
     new CustomMapsSubsystem(),
     new SearchSubsystem(),
+    new MeasurementSubsystem(),
   ]);
   setContext("subsystems", subsystems);
 

@@ -11,6 +11,7 @@
   import { devToolsEnabled } from "../devTools/DevToolsSubsystem";
   import { Subsystems } from "../Subsystem";
   import ComponentInstance from "../../components/ComponentInstance.svelte";
+  import { unitSetting } from "../../units";
 
   const commitHash = __COMMIT_HASH__.substring(0, 8);
 
@@ -55,6 +56,7 @@
   const mounted = isMounted();
 
   const darkModeInputID = uniqueId();
+  const unitsInputID = uniqueId();
   const devToolsInputID = uniqueId();
   const satelliteInputID = uniqueId();
 </script>
@@ -107,6 +109,22 @@
         </ListGroupItem>
 
         <ListGroupItem>
+          <div class="row">
+            <label class="col-3 col-form-label" for={unitsInputID}>Units</label>
+            <div class="col-9">
+              <select
+                class="form-select"
+                id={unitsInputID}
+                bind:value={$unitSetting}
+              >
+                <option value="imperial">Imperial</option>
+                <option value="metric">Metric</option>
+              </select>
+            </div>
+          </div>
+        </ListGroupItem>
+
+        <ListGroupItem>
           <div class="form-check form-switch">
             <input
               class="form-check-input"
@@ -140,9 +158,14 @@
 
       <ListGroup flush>
         <ListGroupItem>
-          <h2 class="h6 mt-3 mb-0" style="font-weight: bold;">Support maps.jwestman.net</h2>
+          <h2 class="h6 mt-3 mb-0" style="font-weight: bold;">
+            Support maps.jwestman.net
+          </h2>
         </ListGroupItem>
-        <ListGroupItem href="https://github.com/sponsors/jameswestman" target="_blank">
+        <ListGroupItem
+          href="https://github.com/sponsors/jameswestman"
+          target="_blank"
+        >
           GitHub Sponsors
         </ListGroupItem>
         <ListGroupItem href="https://www.patreon.com/jwestman" target="_blank">
