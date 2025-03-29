@@ -4,11 +4,12 @@ import DirectionsButton from "./DirectionsButton.svelte";
 import { type Costing, type RouteResponse, type RouteTrip } from "./api-types";
 import { getLocation, taskQueue } from "../../utils";
 import { fetchRoute } from "./api";
-import { readonly, writable } from "svelte/store";
+import { get, readonly, writable } from "svelte/store";
 import type { GeoJSONSource, Map } from "maplibre-gl";
 import { ThemeVariant, type Theme } from "../../theme";
 import { decode } from "@googlemaps/polyline-codec";
 import ReturnToDirections from "./ReturnToDirections.svelte";
+import { unitSetting } from "../../units";
 
 export class RoutingSubsystem extends Subsystem {
   private _stops: Place[] = [];
@@ -199,7 +200,7 @@ export class RoutingSubsystem extends Subsystem {
             type: "break",
           })),
           costing: this.costing,
-          units: "kilometers",
+          units: get(unitSetting) === "imperial" ? "miles" : "kilometers",
         },
         abort.signal
       );
