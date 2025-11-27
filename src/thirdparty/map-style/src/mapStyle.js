@@ -96,6 +96,7 @@ export function generateMapStyle(options) {
     sources,
     /* Not used by libshumate, but necessary for Mapbox GL JS */
     glyphs: "https://tiles.maps.jwestman.net/fonts/{fontstack}/{range}.pbf",
+    projection: { type: "globe" },
     layers: [
       {
         id: "background",

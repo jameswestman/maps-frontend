@@ -8,6 +8,7 @@
     NavigationControl,
     type MapGeoJSONFeature,
     Marker,
+    GlobeControl,
   } from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
   import { onDestroy, onMount } from "svelte";
@@ -159,6 +160,7 @@
         sources: {},
         layers: [],
       },
+      minZoom: 0,
       hash: true,
       attributionControl: {
         customAttribution:
@@ -176,6 +178,8 @@
       trackUserLocation: true,
     });
     map.addControl(geolocate);
+
+    map.addControl(new GlobeControl());
 
     let geolocation: GeolocationCoordinates;
     geolocate.on("geolocate", (event) => {
