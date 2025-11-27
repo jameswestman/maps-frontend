@@ -26,5 +26,11 @@ export default defineConfig({
     /* index.js is going to be big, not much we can do about it, but do
        still complain if it gets much bigger */
     chunkSizeWarningLimit: 1500,
+    target: "esnext",
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "esnext",
+    },
   },
 });

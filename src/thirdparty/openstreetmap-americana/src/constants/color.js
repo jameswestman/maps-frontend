@@ -1,6 +1,9 @@
 export const backgroundFill = `hsl(30, 44%, 96%)`;
 export const backgroundFillTranslucent = `hsla(30, 44%, 96%, 0.8)`;
 
+export const hillshadeShadow = "hsla(30, 14%, 63%, 1)";
+export const hillshadeHighlight = "hsla(30, 44%, 99%, 1)";
+
 export const waterFill = "hsl(211, 50%, 85%)";
 export const waterFillTranslucent = "hsla(211, 50%, 85%, 0.5)";
 export const waterIntermittentFill = "hsla(211, 60%, 85%, 0.3)";
@@ -23,10 +26,17 @@ export const parkLabelHalo = "hsl(90, 27%, 94%)";
 export const aerialwayLine = "hsl(310, 41%, 59%)";
 export const aerialwayLabel = "hsl(310, 71%, 29%)";
 
+export const aboriginalFill = "hsl(34, 40%, 92%)";
+export const aboriginalOutline = "hsl(34, 40%, 80%)";
+export const aboriginalLabel = "hsl(34, 40%, 35%)";
+export const aboriginalLabelHalo = "hsl(34, 40%, 96%)";
+
 export const airportFill = "hsl(250, 41%, 95%)";
 export const airportOutline = "hsl(250, 41%, 79%)";
 export const airportRunway = "hsl(250, 41%, 79%)";
 export const airportLabel = "hsl(250, 71%, 29%)";
+
+export const urbanSubAreaLabel = "hsl(211, 43%, 28%)";
 
 //TODO - rename this variable to "palette"
 export const palette = {
