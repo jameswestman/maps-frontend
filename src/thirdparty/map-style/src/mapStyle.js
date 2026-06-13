@@ -74,7 +74,7 @@ export function generateMapStyle(options) {
     },
     terrain: {
       type: "raster-dem",
-      url: "https://tiles.maps.jwestman.net/data/terrain.json",
+      url: "https://tiles.mapterhorn.com/tilejson.json",
     },
   };
 
